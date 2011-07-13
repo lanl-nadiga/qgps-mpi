@@ -5,7 +5,8 @@ const int QGPS_NX = 64, QGPS_NY = 64;
 int QGPS_COMM_WORLD;
 int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 
-qgps_block_t *qgps_blocks = 0;
+qgps_block_t *qgps_blocks = NULL;
+qgps_block_t *qgps_transpose_blocks = NULL;
 
 int qgps_initialize(int argc, char **argv) {
         MPI_Init(&argc, &argv);
@@ -15,6 +16,9 @@ int qgps_initialize(int argc, char **argv) {
         MPI_Comm_size(QGPS_COMM_WORLD, &qgps_number_tasks);
 
         qgps_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
+        if(!qgps_blocks)
+                return 1;
+        qgps_transpose_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
         if(!qgps_blocks)
                 return 1;
 
