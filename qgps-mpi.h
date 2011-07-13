@@ -4,6 +4,7 @@
 
 #ifndef _QGPS_MPI_H
 #define _QGPS_MPI_H
+#include <mpi.h>
 
 /* domain size */
 extern const int QGPS_NX, QGPS_NY;
@@ -22,7 +23,7 @@ extern qgps_block_t *qgps_blocks;
 extern qgps_block_t *qgps_transpose_blocks;
 
 /* MPI task variables */
-extern const int QGPS_COMM_WORLD;
+extern const MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
 
 int qgps_initialize(int argc, char **argv);
