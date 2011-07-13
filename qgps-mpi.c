@@ -45,11 +45,11 @@ int qgps_initialize_mpi(int argc, char **argv) {
 
 int qgps_initialize_blocks(int argc, char **argv) {
         qgps_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
-        if(!qgps_blocks)
+        if (!qgps_blocks)
                 return 1;
 
         qgps_transpose_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
-        if(!qgps_transpose_blocks)
+        if (!qgps_transpose_blocks)
                 return 1;
 
         return 0;
@@ -112,7 +112,7 @@ int qgps_initialize_fftw() {
         MPI_Barrier(QGPS_COMM_WORLD);
 
         // broadcast block information
-        for(int task = 0; task < qgps_number_tasks; task++) {
+        for (int task = 0; task < qgps_number_tasks; task++) {
                 qgps_broadcast_block(&(qgps_blocks[task]), task);
         }
 }
