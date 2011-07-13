@@ -7,7 +7,7 @@ int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 
 qgps_block_t *qgps_blocks = 0;
 
-int initialize(int argc, char **argv) {
+int qgps_initialize(int argc, char **argv) {
         MPI_Init(&argc, &argv);
         MPI_Comm_dup(MPI_COMM_WORLD, &QGPS_COMM_WORLD);
 
@@ -21,7 +21,7 @@ int initialize(int argc, char **argv) {
         return 0;
 }
 
-int cleanup() {
+int qgps_cleanup() {
         MPI_Finalize();
 
         return 0;
