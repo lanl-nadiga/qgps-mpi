@@ -15,7 +15,7 @@ int qgps_initialize_mpi(int argc, char **argv);
 int qgps_initialize_blocks();
 int qgps_cleanup_mpi();
 int qgps_broadcast_block(qgps_block_t *block, int src_task);
-int qgps_initialize_rfftw2d();
+int qgps_initialize_fftw();
 
 int qgps_initialize(int argc, char **argv) {
         if (qgps_initialize_mpi(argc, argv))
@@ -69,13 +69,10 @@ int qgps_broadcast_block(qgps_block_t *block, int src_task) {
         return 0;
 }
 
-int qgps_initialize_rfftw2d() {
+int qgps_initialize_fftw() {
         ptrdiff_t alloc_local, local_n0, local_0_start;
-
         qgps_block_t* block;
 
-        int local_nx, local_x_start, local_ny_after_transpose;
-        int local_y_start_after_transpose, total_local_size;
 
         alloc_local = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
                                                         QGPS_COMM_WORLD,
