@@ -1,6 +1,7 @@
 #include "qgps-mpi.h"
 #include <mpi.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
         if (qgps_initialize(argc, argv)) {
