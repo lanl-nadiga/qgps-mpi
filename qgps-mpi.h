@@ -5,6 +5,7 @@
 #ifndef _QGPS_MPI_H
 #define _QGPS_MPI_H
 #include <mpi.h>
+#include <fftw3-mpi.h>
 
 /* domain size */
 extern const int QGPS_NX, QGPS_NY;
@@ -25,6 +26,9 @@ extern qgps_block_t *qgps_transpose_blocks;
 /* MPI task variables */
 extern const MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
+
+/* FFTW task variables */
+extern rfftwnd_mpi_plan plan, iplan;
 
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();

@@ -9,6 +9,8 @@ int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 qgps_block_t *qgps_blocks = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
 
+rfftwnd_mpi_plan plan, iplan;
+
 int qgps_initialize_mpi(int argc, char **argv);
 int qgps_initialize_blocks();
 int qgps_cleanup_mpi();
@@ -108,11 +110,11 @@ int qgps_initialize_rfftw2d() {
         block->y_length = local_ny_after_transpose;
         block->size     = total_local_size;
 
-        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(QGPS_COMM_WORLD);
 
         // broadcast block information
-        for(int task = 0; task < num_tasks; task++) {
-                qgps_broadcast_block(&(blocks[task]),task);
+        for(int task = 0; task < qgps_number_tasks; task++) {
+                qgps_broadcast_block(&(qgps_blocks[task]), task);
         }
 }
 
