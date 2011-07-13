@@ -22,6 +22,8 @@ int qgps_initialize(int argc, char **argv) {
                 return 1;
         if (qgps_initialize_blocks())
                 return 1;
+        if (qgps_initialize_fftw())
+                return 1;
 
         return 0;
 }
@@ -73,6 +75,7 @@ int qgps_initialize_fftw() {
         ptrdiff_t alloc_local, local_n0, local_0_start;
         qgps_block_t* block;
 
+        fftw_mpi_init();
 
         alloc_local = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
                                                         QGPS_COMM_WORLD,
@@ -115,5 +118,7 @@ int qgps_initialize_fftw() {
         for (int task = 0; task < qgps_number_tasks; task++) {
                 qgps_broadcast_block(&(qgps_blocks[task]), task);
         }
+
+        return 0;
 }
 
