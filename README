@@ -1,0 +1,15 @@
+Quasi-geostrophic pseudo-spectral 2-d fluid simulation; a LANL-Balu production.
+
+We will write in C, and gosh darnit, we're gonna like it!
+
+Also, the simulation will enjoy fftw-mpi.
+
+
+Also, http://www.kernel.org/doc/Documentation/CodingStyle, with the following
+modifications:
+    * multi-dimensional arrays may be looped over without indenting each loop:
+        for(int i = 0; i < N; i++)
+	for(int j = 0; j < M; j++)
+	for(int k = 0; k < P; k++) {
+	        do_stuff();
+	}
