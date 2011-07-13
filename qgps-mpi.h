@@ -19,6 +19,7 @@ typedef struct {
 } qgps_block_t;
 
 extern qgps_block_t *qgps_blocks;
+extern qgps_block_t *qgps_transpose_blocks;
 
 /* MPI task variables */
 extern const int QGPS_COMM_WORLD;
