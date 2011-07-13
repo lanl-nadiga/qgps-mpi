@@ -9,7 +9,7 @@ int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 qgps_block_t *qgps_blocks = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
 
-fftw_plan plan, inverse_plan;
+fftw_plan qgps_plan, qgps_inverse_plan;
 
 int qgps_initialize_mpi(int argc, char **argv);
 int qgps_initialize_blocks();
@@ -82,11 +82,13 @@ int qgps_initialize_fftw() {
                                                         &local_n0,
                                                         &local_0_start);
 
-        plan            = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY, NULL, NULL,
+        qgps_plan         = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY, 
+                                                                NULL, NULL,
                                                                 QGPS_COMM_WORLD,
                                                                 FFTW_ESTIMATE);
 
-        inverse_plan    = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY, NULL, NULL,
+        qgps_inverse_plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
+                                                                NULL, NULL,
                                                                 QGPS_COMM_WORLD,
                                                                 FFTW_ESTIMATE);
 
