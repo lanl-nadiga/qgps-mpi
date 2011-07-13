@@ -9,7 +9,7 @@ int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 qgps_block_t *qgps_blocks = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
 
-rfftwnd_mpi_plan plan, iplan;
+fftw_plan plan, inverse_plan;
 
 int qgps_initialize_mpi(int argc, char **argv);
 int qgps_initialize_blocks();
@@ -70,45 +70,47 @@ int qgps_broadcast_block(qgps_block_t *block, int src_task) {
 }
 
 int qgps_initialize_rfftw2d() {
+        ptrdiff_t alloc_local, local_n0, local_0_start;
+
         qgps_block_t* block;
 
         int local_nx, local_x_start, local_ny_after_transpose;
         int local_y_start_after_transpose, total_local_size;
 
-        qgps_plan = rfftw2d_mpi_create_plan(    QGPS_COMM_WORLD,
-                                                QGPS_NX, QGPS_NY,
-                                                FFTW_REAL_TO_COMPLEX,
-                                                FFTW_ESTIMATE   );
-        qgps_iplan = rfftw2d_mpi_create_plan(   QGPS_COMM_WORLD,
-                                                QGPS_NX, QGPS_NY,
-                                                FFTW_COMPLEX_TO_REAL,
-                                                FFTW_ESTIMATE   );
+        alloc_local = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
+                                                        QGPS_COMM_WORLD,
+                                                        &local_n0,
+                                                        &local_0_start);
 
-        rfftwnd_mpi_local_sizes(qgps_plan, &local_nx, &local_x_start,
-                                &local_ny_after_transpose,
-                                &local_y_start_after_transpose,
-                                &total_local_size       );
+        plan            = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY, NULL, NULL,
+                                                                QGPS_COMM_WORLD,
+                                                                FFTW_ESTIMATE);
+
+        inverse_plan    = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY, NULL, NULL,
+                                                                QGPS_COMM_WORLD,
+                                                                FFTW_ESTIMATE);
+
 
         // init block information for this task
         block = &(qgps_blocks[qgps_current_task]);
         block->id       = qgps_current_task;
-        block->x_begin  = local_x_start;
-        block->x_end    = block->x_begin + local_nx;
-        block->x_length = local_nx;
+        block->x_begin  = local_0_start;
+        block->x_end    = block->x_begin + local_n0;
+        block->x_length = local_n0;
         block->y_begin  = 0;
         block->y_end    = QGPS_NY;
         block->y_length = QGPS_NY;
-        block->size     = total_local_size;
+        block->size     = alloc_local;
 
         block = &(qgps_transpose_blocks[qgps_current_task]);
         block->id       = qgps_current_task;
         block->x_begin  = 0;
         block->x_end    = QGPS_NX;
         block->x_length = QGPS_NX;
-        block->y_begin  = local_y_start_after_transpose;
-        block->y_end    = block->y_begin + local_ny_after_transpose;
-        block->y_length = local_ny_after_transpose;
-        block->size     = total_local_size;
+        block->y_begin  = local_0_start;
+        block->y_end    = block->y_begin + local_n0;
+        block->y_length = local_n0;
+        block->size     = alloc_local;
 
         MPI_Barrier(QGPS_COMM_WORLD);
 

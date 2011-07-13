@@ -28,7 +28,7 @@ extern const MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
 
 /* FFTW task variables */
-extern rfftwnd_mpi_plan plan, iplan;
+extern fftw_plan plan, inverse_plan;
 
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();
