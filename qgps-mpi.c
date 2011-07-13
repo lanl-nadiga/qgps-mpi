@@ -93,7 +93,7 @@ int qgps_initialize_rfftw2d() {
         block = &(qgps_blocks[qgps_current_task]);
         block->id       = qgps_current_task;
         block->x_begin  = local_x_start;
-        block->x_end    = block->x_begin+local_nx;
+        block->x_end    = block->x_begin + local_nx;
         block->x_length = local_nx;
         block->y_begin  = 0;
         block->y_end    = QGPS_NY;
@@ -106,7 +106,7 @@ int qgps_initialize_rfftw2d() {
         block->x_end    = QGPS_NX;
         block->x_length = QGPS_NX;
         block->y_begin  = local_y_start_after_transpose;
-        block->y_end    = block->y_begin+local_ny_after_transpose;
+        block->y_end    = block->y_begin + local_ny_after_transpose;
         block->y_length = local_ny_after_transpose;
         block->size     = total_local_size;
 
