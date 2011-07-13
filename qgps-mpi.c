@@ -19,7 +19,7 @@ int initialize(int argc, char **argv) {
         if(!qgps_blocks)
                 return 1;
         qgps_transpose_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
-        if(!qgps_blocks)
+        if(!qgps_transpose_blocks)
                 return 1;
 
         return 0;
