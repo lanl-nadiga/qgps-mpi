@@ -4,14 +4,14 @@
 
 const int QGPS_NX = 64, QGPS_NY = 64;
 
-const MPI_Comm QGPS_COMM_WORLD;
+MPI_Comm QGPS_COMM_WORLD;
 int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 
 qgps_block_t *qgps_blocks = NULL;
-qgps_block_t * const qgps_current_block = NULL;
-qgps_block_t * const qgps_current_transpose_block = NULL;
+qgps_block_t * qgps_current_block = NULL;
+qgps_block_t * qgps_current_transpose_block = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
-const ptrdiff_t qgps_local_size;
+ptrdiff_t qgps_local_size;
 
 fftw_plan qgps_plan, qgps_inverse_plan;
 
@@ -45,7 +45,7 @@ int qgps_cleanup() {
 
 int qgps_initialize_mpi(int argc, char **argv) {
         MPI_Init(&argc, &argv);
-        MPI_Comm_dup(MPI_COMM_WORLD, (MPI_Comm*)&QGPS_COMM_WORLD);
+        MPI_Comm_dup(MPI_COMM_WORLD, &QGPS_COMM_WORLD);
 
         MPI_Comm_rank(QGPS_COMM_WORLD, &qgps_current_task);
         MPI_Comm_size(QGPS_COMM_WORLD, &qgps_number_tasks);
@@ -101,8 +101,8 @@ int qgps_initialize_fftw() {
                                                                 FFTW_ESTIMATE);
 
 
-        *((qgps_block_t**)&qgps_current_block) = &qgps_blocks[qgps_current_task];
-        *((qgps_block_t**)&qgps_current_transpose_block) = &qgps_transpose_blocks[qgps_current_task];
+        qgps_current_block = &qgps_blocks[qgps_current_task];
+        qgps_current_transpose_block = &qgps_transpose_blocks[qgps_current_task];
 
         // init block information for this task
         block = qgps_current_block;

@@ -25,12 +25,12 @@ extern qgps_block_t *qgps_blocks;
 extern qgps_block_t *qgps_transpose_blocks;
 
 /* MPI task variables */
-extern const MPI_Comm QGPS_COMM_WORLD;
+extern MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
 
-extern qgps_block_t * const qgps_current_block;
-extern qgps_block_t * const qgps_current_transpose_block;
-extern const ptrdiff_t qgps_local_size;
+extern qgps_block_t * qgps_current_block;
+extern qgps_block_t * qgps_current_transpose_block;
+extern ptrdiff_t qgps_local_size;
 
 /* FFTW task variables */
 extern fftw_plan qgps_plan, qgps_inverse_plan;
