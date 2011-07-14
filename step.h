@@ -12,6 +12,7 @@ extern complex  *psi_x,
 // vorticity in spectral space
 extern complex  *omega;
 
+int qgps_step_init();
 int qgps_step();
 
 #endif
