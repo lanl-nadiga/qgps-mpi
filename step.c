@@ -12,9 +12,9 @@ int advection(complex *tracer_advt, complex *tracer);
 int update_psi();
 
 int qgps_step_init() {
-        psi_x = (complex *) fftw_alloc_complex(qgps_local_size);
-        psi_y = (complex *) fftw_alloc_complex(qgps_local_size);
-        omega = (complex *) fftw_alloc_complex(qgps_local_size);
+        psi_x = fftw_alloc_complex(qgps_local_size);
+        psi_y = fftw_alloc_complex(qgps_local_size);
+        omega = fftw_alloc_complex(qgps_local_size);
 }
 
 int qgps_step_free() {
