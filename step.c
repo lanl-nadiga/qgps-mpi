@@ -15,6 +15,10 @@ int qgps_step_init() {
         psi_x = fftw_alloc_complex(qgps_local_size);
         psi_y = fftw_alloc_complex(qgps_local_size);
         omega = fftw_alloc_complex(qgps_local_size);
+
+        time = time_start;
+
+        return 0;
 }
 
 int qgps_step_free() {
@@ -26,10 +30,51 @@ int qgps_step_free() {
 
         free(omega);
         omega = NULL;
+
+        return 0;
 }
 
 
 int qgps_step() {
+        //Compute RK4 time step
+
+        complex *omega_t;
+
+        complex *work;
+
+        omega_t = fftw_alloc_complex(qgps_local_size);
+        work = fftw_alloc_complex(qgps_local_size);
+
+        advection(work,omega);
+
+        for(idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] = -work[idx]/6.0;
+                work[idx] = omega[idx] - work[idx]*time_step/2.0;
+        }
+        advection(work,work);
+
+        for(idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx]/3.0;
+                work[idx] = omega[idx] - work[idx]*time_step/2.0;
+        }
+        advection(work,work);
+
+        for(idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx]/3.0;
+                work[idx] = omega[idx] - work[idx]*time_step;
+        }
+        advection(work,work);
+
+        for(idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx]/6.0;
+                omega[idx] += omega_t[idx]*time_step;
+        }
+
+        time += time_step;
+
+        free(omega_t);
+        free(work);
+
         return 0;
 }
 
