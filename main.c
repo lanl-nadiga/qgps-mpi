@@ -9,6 +9,8 @@ int main(int argc, char **argv) {
                 return EXIT_FAILURE;
         }
 
+        qgps_step();
+
         if (qgps_cleanup()) {
                 fprintf(stderr, "failed to cleanup qgps\n");
                 return EXIT_FAILURE;
