@@ -4,10 +4,10 @@
 #include "qgps-mpi.h"
 
 // time step
-extern double time;
-extern const double time_start;
-extern const double time_end;
-extern const double time_step;
+extern double qgps_time;
+extern const double qgps_time_start;
+extern const double qgps_time_end;
+extern const double qgps_time_step;
 
 // gradient of stream function in spectral space
 extern complex  *psi_x,

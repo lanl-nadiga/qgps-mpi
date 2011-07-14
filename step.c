@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include "step.h"
 
-const double time_start = 0.0;
-const double time_end   = 1.0;
-const double time_step  = 0.1;
-double time = 0;
+const double qgps_time_start = 0.0;
+const double qgps_time_end   = 1.0;
+const double qgps_time_step  = 0.1;
+double qgps_time = 0;
 
 complex *psi_x;
 complex *psi_y;
@@ -27,7 +27,7 @@ int qgps_step_init() {
         if (!omega)
                 return 1;
 
-        time = time_start;
+        qgps_time = qgps_time_start;
 
         return 0;
 }
@@ -49,8 +49,6 @@ int qgps_step_free() {
 int qgps_step() {
         //Compute RK4 time step
 
-        int idx;
-
         complex *omega_t;
 
         complex *work;
@@ -60,30 +58,30 @@ int qgps_step() {
 
         advection(work,omega);
 
-        for(idx = 0; idx < qgps_local_size; idx++) {
-                omega_t[idx] = -work[idx]/6.0;
-                work[idx] = omega[idx] - work[idx]*time_step/2.0;
+        for (int idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] = -work[idx] / 6.0;
+                work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
         advection(work,work);
 
-        for(idx = 0; idx < qgps_local_size; idx++) {
-                omega_t[idx] -= work[idx]/3.0;
-                work[idx] = omega[idx] - work[idx]*time_step/2.0;
+        for (int idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx] / 3.0;
+                work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
         advection(work,work);
 
-        for(idx = 0; idx < qgps_local_size; idx++) {
-                omega_t[idx] -= work[idx]/3.0;
-                work[idx] = omega[idx] - work[idx]*time_step;
+        for (int idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx] / 3.0;
+                work[idx] = omega[idx] - work[idx] * qgps_time_step;
         }
         advection(work,work);
 
-        for(idx = 0; idx < qgps_local_size; idx++) {
-                omega_t[idx] -= work[idx]/6.0;
-                omega[idx] += omega_t[idx]*time_step;
+        for (int idx = 0; idx < qgps_local_size; idx++) {
+                omega_t[idx] -= work[idx] / 6.0;
+                omega[idx] += omega_t[idx] * qgps_time_step;
         }
 
-        time += time_step;
+        qgps_time += qgps_time_step;
 
         free(omega_t);
         free(work);
