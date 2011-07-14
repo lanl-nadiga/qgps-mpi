@@ -33,13 +33,13 @@ int qgps_step_init() {
 }
 
 int qgps_step_free() {
-        free(psi_x);
+        fftw_free(psi_x);
         psi_x = NULL;
 
-        free(psi_y);
+        fftw_free(psi_y);
         psi_y = NULL;
 
-        free(omega);
+        fftw_free(omega);
         omega = NULL;
 
         return 0;
@@ -83,8 +83,8 @@ int qgps_step() {
 
         qgps_time += qgps_time_step;
 
-        free(omega_t);
-        free(work);
+        fftw_free(omega_t);
+        fftw_free(work);
 
         return 0;
 }
@@ -168,12 +168,13 @@ int advection(complex *tracer_advt, complex *tracer) {
         // Compute the fft of advection
         fftw_mpi_execute_dft_r2c(qgps_plan, advt_real, tracer_advt);
 
-        free(tracer_kx);
-        free(tracer_ky);
-        free(tracer_x);
-        free(tracer_y);
-        free(u_vel);
-        free(v_vel);
+        fftw_free(tracer_kx);
+        fftw_free(tracer_ky);
+        fftw_free(tracer_x);
+        fftw_free(tracer_y);
+        fftw_free(u_vel);
+        fftw_free(v_vel);
+        fftw_free(advt_real);
 
         return 0;
 }
