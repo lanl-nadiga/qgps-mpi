@@ -9,8 +9,12 @@ int main(int argc, char **argv) {
                 return EXIT_FAILURE;
         }
 
-        while(qgps_time < qgps_time_end)
+        while(qgps_time < qgps_time_end) {
+                qgps_open();
                 qgps_step();
+                qgps_write();
+                qgps_close();
+        }
 
         if (qgps_cleanup()) {
                 fprintf(stderr, "failed to cleanup qgps\n");
