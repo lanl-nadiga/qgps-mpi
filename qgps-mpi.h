@@ -40,4 +40,6 @@ extern fftw_plan qgps_plan, qgps_inverse_plan;
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();
 
+void qgps_exit();
+
 #endif
