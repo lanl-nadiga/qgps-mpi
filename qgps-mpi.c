@@ -43,6 +43,11 @@ int qgps_cleanup() {
         return 0;
 }
 
+void qgps_exit() {
+        qgps_cleanup();
+        exit(EXIT_FAILURE);
+}
+
 int qgps_initialize_mpi(int argc, char **argv) {
         MPI_Init(&argc, &argv);
         MPI_Comm_dup(MPI_COMM_WORLD, &QGPS_COMM_WORLD);

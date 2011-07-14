@@ -14,6 +14,8 @@ int advection(complex *tracer_advt, complex *tracer);
 
 int update_psi();
 
+int init_omega(qgps_init_type_t init_type);
+
 int qgps_step_init() {
         psi_x = fftw_alloc_complex(qgps_local_size);
         if (!psi_x)
@@ -28,6 +30,8 @@ int qgps_step_init() {
                 return 1;
 
         qgps_time = qgps_time_start;
+
+        init_omega(QGPS_INIT_DELTA_K);
 
         return 0;
 }
@@ -187,5 +191,33 @@ int advection(complex *tracer_advt, complex *tracer) {
         fftw_mpi_execute_dft_r2c(qgps_plan, advt_real, tracer_advt);
 
         return 0;
+}
+
+void qgps_init_delta_k() {
+        for(int idx = 0; idx < qgps_local_size; idx++) {
+                omega[idx] = 0.0;
+        }
+
+        if(qgps_current_block->x_begin == 0) {
+                omega[QGPS_NX+1] = 1.0;
+        }
+}
+
+
+int init_omega(qgps_init_type_t init_type) {
+        switch (init_type) {
+                case QGPS_INIT_RESTART:
+                        fprintf(stderr,"init option not supported yet.\n");
+                        qgps_exit();
+                        break;
+                case QGPS_INIT_DELTA_K:
+                        qgps_init_delta_k();
+                        update_psi();
+                        break;
+                default:
+                        fprintf(stderr,"unknown init option.\n");
+                        qgps_exit();
+                        break;
+        }
 }
 

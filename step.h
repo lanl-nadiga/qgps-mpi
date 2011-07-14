@@ -3,6 +3,12 @@
 
 #include "qgps-mpi.h"
 
+// omega initialization types
+typedef enum {
+        QGPS_INIT_RESTART,
+        QGPS_INIT_DELTA_K,
+} qgps_init_type_t;
+
 // time step
 extern double qgps_time;
 extern const double qgps_time_start;
