@@ -35,6 +35,8 @@ int qgps_initialize(int argc, char **argv) {
 }
 
 int qgps_cleanup() {
+        if (qgps_step_free())
+                return 1;
         if (qgps_cleanup_mpi())
                 return 1;
 
