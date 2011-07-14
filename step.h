@@ -5,9 +5,9 @@
 
 // time step
 extern double time;
-const double time_start = 0.0;
-const double time_end   = 1.0;
-const double time_step  = 0.1;
+extern const double time_start;
+extern const double time_end;
+extern const double time_step;
 
 // gradient of stream function in spectral space
 extern complex  *psi_x,

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include "step.h"
 
-double dt = 0.1;
+const double time_start = 0.0;
+const double time_end   = 1.0;
+const double time_step  = 0.1;
 
 complex *psi_x;
 complex *psi_y;
@@ -37,6 +39,8 @@ int qgps_step_free() {
 
 int qgps_step() {
         //Compute RK4 time step
+
+        int idx;
 
         complex *omega_t;
 
