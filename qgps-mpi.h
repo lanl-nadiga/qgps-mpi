@@ -7,6 +7,7 @@
 #include <mpi.h>
 #include <complex.h>
 #include <fftw3-mpi.h>
+#include "step.h"
 
 /* domain size */
 extern const int QGPS_NX, QGPS_NY;
