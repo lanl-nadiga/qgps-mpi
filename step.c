@@ -41,15 +41,15 @@ int update_psi() {
 
         int k1, k2, k_sq, idx;
 
-        for(int x = 0; x < nx; x++)
-        for(int y = 0; y < ny; y++) {
+        for (int x = 0; x < nx; x++)
+        for (int y = 0; y < ny; y++) {
                 idx = y*nx + x;
                 k1 = x + xb;
                 k2 = y + yb;
-                k_sq = (k1*k1 + k2*k2);
-                if(k_sq > 0) {
-                        psi_x[idx] = I*(k1 / (double)k_sq) * omega[idx];
-                        psi_y[idx] = I*(k2 / (double)k_sq) * omega[idx];
+                k_sq = (k1 * k1) + (k2 * k2);
+                if (k_sq > 0) {
+                        psi_x[idx] = I * (k1 / (double)k_sq) * omega[idx];
+                        psi_y[idx] = I * (k2 / (double)k_sq) * omega[idx];
                 }
                 else {
                         // What do we do here?
@@ -62,7 +62,6 @@ int update_psi() {
 }
 
 int advection(complex *tracer_advt, complex *tracer) {
-
         int     nx = qgps_current_transpose_block->x_length,
                 ny = qgps_current_transpose_block->y_length,
                 xb = qgps_current_transpose_block->x_begin,
@@ -89,14 +88,14 @@ int advection(complex *tracer_advt, complex *tracer) {
         fftw_mpi_execute_dft_c2r(qgps_inverse_plan, psi_y, u_vel);
 
         // Compute the gradient of tracer
-        for(int x = 0; x < nx; x++)
-        for(int y = 0; y < ny; y++) {
+        for (int x = 0; x < nx; x++)
+        for (int y = 0; y < ny; y++) {
                 int idx = y*nx + x;
                 int k1 = x + xb;
                 int k2 = y + yb;
-                if(k1 > 0 || k2 > 0) {
-                        tracer_kx[idx] = -I*k1 * tracer[idx];
-                        tracer_ky[idx] = -I*k2 * tracer[idx];
+                if (k1 > 0 || k2 > 0) {
+                        tracer_kx[idx] = -I * k1 * tracer[idx];
+                        tracer_ky[idx] = -I * k2 * tracer[idx];
                 }
                 else {
                         // What do we do here?
@@ -110,8 +109,8 @@ int advection(complex *tracer_advt, complex *tracer) {
         fftw_mpi_execute_dft_c2r(qgps_inverse_plan, tracer_ky, tracer_y);
 
         // Calculate the advection in real space
-        for(int idx = 0; idx < qgps_local_size; idx++) {
-                advt_real[idx] = u_vel[idx]*tracer_x[idx] - v_vel[idx]*tracer_y[idx];
+        for (int idx = 0; idx < qgps_local_size; idx++) {
+                advt_real[idx] = u_vel[idx] * tracer_x[idx] - v_vel[idx] * tracer_y[idx];
         }
 
         // Compute the fft of advection
@@ -126,5 +125,4 @@ int advection(complex *tracer_advt, complex *tracer) {
 
         return 0;
 }
-
 
