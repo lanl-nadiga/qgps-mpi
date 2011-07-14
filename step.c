@@ -4,6 +4,7 @@
 const double time_start = 0.0;
 const double time_end   = 1.0;
 const double time_step  = 0.1;
+double time = 0;
 
 complex *psi_x;
 complex *psi_y;
