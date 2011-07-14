@@ -13,6 +13,7 @@ extern complex  *psi_x,
 extern complex  *omega;
 
 int qgps_step_init();
+int qgps_step_free();
 int qgps_step();
 
 #endif
