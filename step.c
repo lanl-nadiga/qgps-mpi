@@ -67,21 +67,17 @@ int advection(complex *tracer_advt, complex *tracer) {
                 xb = qgps_current_transpose_block->x_begin,
                 yb = qgps_current_transpose_block->y_begin;
 
-        complex *tracer_kx, *tracer_ky;
+        complex *tracer_kx = fftw_alloc_complex(qgps_local_size),
+                *tracer_ky = fftw_alloc_complex(qgps_local_size);
 
-        double *tracer_x, *tracer_y;
+        double *tracer_x = fftw_alloc_real(qgps_local_size * 2),
+               *tracer_y = fftw_alloc_real(qgps_local_size * 2);
 
-        double *u_vel, *v_vel; // v_vel has sign reversed
+        /* v_vel has reversed sign */
+        double *u_vel = fftw_alloc_real(qgps_local_size * 2),
+               *v_vel = fftw_alloc_real(qgps_local_size * 2);
 
-        double *advt_real;
-
-        tracer_kx = fftw_alloc_complex(qgps_local_size);
-        tracer_ky = fftw_alloc_complex(qgps_local_size);
-        tracer_x = fftw_alloc_real(qgps_local_size*2);
-        tracer_y = fftw_alloc_real(qgps_local_size*2);
-        u_vel = fftw_alloc_real(qgps_local_size*2);
-        v_vel = fftw_alloc_real(qgps_local_size*2);
-        advt_real = fftw_alloc_real(qgps_local_size*2);
+        double *advt_real = fftw_alloc_real(qgps_local_size * 2);
 
         // Calculate the velocity in real space
         fftw_mpi_execute_dft_c2r(qgps_inverse_plan, psi_x, v_vel);
