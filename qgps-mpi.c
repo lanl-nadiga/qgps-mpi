@@ -121,8 +121,8 @@ int qgps_initialize_fftw() {
         block->x_end    = QGPS_NX;
         block->x_length = QGPS_NX;
         block->y_begin  = local_0_start;
-        block->y_end    = block->y_begin + local_n0;
-        block->y_length = local_n0;
+        block->y_end    = block->y_begin + local_n0 / 2 + 1;
+        block->y_length = local_n0 / 2 + 1;
         block->size     = qgps_local_size;
 
         MPI_Barrier(QGPS_COMM_WORLD);
