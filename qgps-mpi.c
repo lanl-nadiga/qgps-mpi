@@ -85,7 +85,7 @@ int qgps_initialize_fftw() {
 
         fftw_mpi_init();
 
-        *((ptrdiff_t*)&qgps_local_size) = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
+        qgps_local_size = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
                                                         QGPS_COMM_WORLD,
                                                         &local_n0,
                                                         &local_0_start);
