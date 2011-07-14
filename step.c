@@ -16,8 +16,16 @@ int update_psi();
 
 int qgps_step_init() {
         psi_x = fftw_alloc_complex(qgps_local_size);
+        if (!psi_x)
+                return 1;
+
         psi_y = fftw_alloc_complex(qgps_local_size);
+        if (!psi_y)
+                return 1;
+
         omega = fftw_alloc_complex(qgps_local_size);
+        if (!omega)
+                return 1;
 
         time = time_start;
 
