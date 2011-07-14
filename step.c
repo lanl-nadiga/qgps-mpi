@@ -12,11 +12,9 @@ int advection(complex *tracer_advt, complex *tracer);
 int update_psi();
 
 int qgps_step_init() {
-        int local_size = qgps_blocks[qgps_current_task].size;
-
-        psi_x = (complex *) fftw_alloc_complex(local_size);
-        psi_y = (complex *) fftw_alloc_complex(local_size);
-        omega = (complex *) fftw_alloc_complex(local_size);
+        psi_x = (complex *) fftw_alloc_complex(qgps_local_size);
+        psi_y = (complex *) fftw_alloc_complex(qgps_local_size);
+        omega = (complex *) fftw_alloc_complex(qgps_local_size);
 }
 
 int qgps_step_free() {
@@ -31,10 +29,10 @@ int qgps_step() {
 }
 
 int update_psi() {
-        int     nx = qgps_transpose_blocks[qgps_current_task].x_length,
-                ny = qgps_transpose_blocks[qgps_current_task].y_length,
-                xb = qgps_transpose_blocks[qgps_current_task].x_begin,
-                yb = qgps_transpose_blocks[qgps_current_task].y_begin;
+        int     nx = qgps_current_transpose_block->x_length,
+                ny = qgps_current_transpose_block->y_length,
+                xb = qgps_current_transpose_block->x_begin,
+                yb = qgps_current_transpose_block->y_begin;
 
         int k1, k2, k_sq, idx;
 
@@ -59,12 +57,11 @@ int update_psi() {
 }
 
 int advection(complex *tracer_advt, complex *tracer) {
-        int local_size = qgps_blocks[qgps_current_task].size;
 
-        int     nx = qgps_transpose_blocks[qgps_current_task].x_length,
-                ny = qgps_transpose_blocks[qgps_current_task].y_length,
-                xb = qgps_transpose_blocks[qgps_current_task].x_begin,
-                yb = qgps_transpose_blocks[qgps_current_task].y_begin;
+        int     nx = qgps_current_transpose_block->x_length,
+                ny = qgps_current_transpose_block->y_length,
+                xb = qgps_current_transpose_block->x_begin,
+                yb = qgps_current_transpose_block->y_begin;
 
         complex *tracer_kx, *tracer_ky;
 
@@ -74,13 +71,13 @@ int advection(complex *tracer_advt, complex *tracer) {
 
         double *advt_real;
 
-        tracer_kx = fftw_alloc_complex(local_size);
-        tracer_ky = fftw_alloc_complex(local_size);
-        tracer_x = fftw_alloc_real(local_size*2);
-        tracer_y = fftw_alloc_real(local_size*2);
-        u_vel = fftw_alloc_real(local_size*2);
-        v_vel = fftw_alloc_real(local_size*2);
-        advt_real = fftw_alloc_real(local_size*2);
+        tracer_kx = fftw_alloc_complex(qgps_local_size);
+        tracer_ky = fftw_alloc_complex(qgps_local_size);
+        tracer_x = fftw_alloc_real(qgps_local_size*2);
+        tracer_y = fftw_alloc_real(qgps_local_size*2);
+        u_vel = fftw_alloc_real(qgps_local_size*2);
+        v_vel = fftw_alloc_real(qgps_local_size*2);
+        advt_real = fftw_alloc_real(qgps_local_size*2);
 
         // Calculate the velocity in real space
         fftw_mpi_execute_dft_c2r(qgps_inverse_plan, psi_x, v_vel);
@@ -108,7 +105,7 @@ int advection(complex *tracer_advt, complex *tracer) {
         fftw_mpi_execute_dft_c2r(qgps_inverse_plan, tracer_ky, tracer_y);
 
         // Calculate the advection in real space
-        for(int idx = 0; idx < local_size; idx++) {
+        for(int idx = 0; idx < qgps_local_size; idx++) {
                 advt_real[idx] = u_vel[idx]*tracer_x[idx] - v_vel[idx]*tracer_y[idx];
         }
 

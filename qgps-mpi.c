@@ -8,7 +8,10 @@ const MPI_Comm QGPS_COMM_WORLD;
 int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
 
 qgps_block_t *qgps_blocks = NULL;
+qgps_block_t * const qgps_current_block = NULL;
+qgps_block_t * const qgps_current_transpose_block = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
+const ptrdiff_t qgps_local_size;
 
 fftw_plan qgps_plan, qgps_inverse_plan;
 
@@ -24,6 +27,8 @@ int qgps_initialize(int argc, char **argv) {
         if (qgps_initialize_blocks())
                 return 1;
         if (qgps_initialize_fftw())
+                return 1;
+        if (qgps_step_init())
                 return 1;
 
         return 0;
@@ -78,7 +83,7 @@ int qgps_initialize_fftw() {
 
         fftw_mpi_init();
 
-        alloc_local = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
+        *((ptrdiff_t*)&qgps_local_size) = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
                                                         QGPS_COMM_WORLD,
                                                         &local_n0,
                                                         &local_0_start);
@@ -94,8 +99,11 @@ int qgps_initialize_fftw() {
                                                                 FFTW_ESTIMATE);
 
 
+        *((qgps_block_t**)&qgps_current_block) = &qgps_blocks[qgps_current_task];
+        *((qgps_block_t**)&qgps_current_transpose_block) = &qgps_transpose_blocks[qgps_current_task];
+
         // init block information for this task
-        block = &(qgps_blocks[qgps_current_task]);
+        block = qgps_current_block;
         block->id       = qgps_current_task;
         block->x_begin  = local_0_start;
         block->x_end    = block->x_begin + local_n0;
@@ -103,9 +111,9 @@ int qgps_initialize_fftw() {
         block->y_begin  = 0;
         block->y_end    = QGPS_NY;
         block->y_length = QGPS_NY;
-        block->size     = alloc_local;
+        block->size     = qgps_local_size;
 
-        block = &(qgps_transpose_blocks[qgps_current_task]);
+        block = qgps_current_transpose_block;
         block->id       = qgps_current_task;
         block->x_begin  = 0;
         block->x_end    = QGPS_NX;
@@ -113,7 +121,7 @@ int qgps_initialize_fftw() {
         block->y_begin  = local_0_start;
         block->y_end    = block->y_begin + local_n0;
         block->y_length = local_n0;
-        block->size     = alloc_local;
+        block->size     = qgps_local_size;
 
         MPI_Barrier(QGPS_COMM_WORLD);
 
