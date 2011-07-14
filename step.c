@@ -83,8 +83,8 @@ int advection(complex *tracer_advt, complex *tracer) {
         advt_real = fftw_alloc_real(local_size*2);
 
         // Calculate the velocity in real space
-        fftw_mpi_execute_dft_c2r(inverse_plan, psi_x, v_vel);
-        fftw_mpi_execute_dft_c2r(inverse_plan, psi_y, u_vel);
+        fftw_mpi_execute_dft_c2r(qgps_inverse_plan, psi_x, v_vel);
+        fftw_mpi_execute_dft_c2r(qgps_inverse_plan, psi_y, u_vel);
 
         // Compute the gradient of tracer
         for(int x = 0; x < nx; x++)
@@ -104,8 +104,8 @@ int advection(complex *tracer_advt, complex *tracer) {
         }
 
         // Compute inverse fft of tracer gradient
-        fftw_mpi_execute_dft_c2r(inverse_plan, tracer_kx, tracer_x);
-        fftw_mpi_execute_dft_c2r(inverse_plan, tracer_ky, tracer_y);
+        fftw_mpi_execute_dft_c2r(qgps_inverse_plan, tracer_kx, tracer_x);
+        fftw_mpi_execute_dft_c2r(qgps_inverse_plan, tracer_ky, tracer_y);
 
         // Calculate the advection in real space
         for(int idx = 0; idx < local_size; idx++) {
@@ -113,7 +113,7 @@ int advection(complex *tracer_advt, complex *tracer) {
         }
 
         // Compute the fft of advection
-        fftw_mpi_execute_dft_r2c(plan, advt_real, tracer_advt);
+        fftw_mpi_execute_dft_r2c(qgps_plan, advt_real, tracer_advt);
 
         free(tracer_kx);
         free(tracer_ky);
