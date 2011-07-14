@@ -5,6 +5,7 @@
 #ifndef _QGPS_MPI_H
 #define _QGPS_MPI_H
 #include <mpi.h>
+#include <complex.h>
 #include <fftw3-mpi.h>
 
 /* domain size */
