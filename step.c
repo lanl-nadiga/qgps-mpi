@@ -19,8 +19,13 @@ int qgps_step_init() {
 
 int qgps_step_free() {
         free(psi_x);
+        psi_x = NULL;
+
         free(psi_y);
+        psi_y = NULL;
+
         free(omega);
+        omega = NULL;
 }
 
 
