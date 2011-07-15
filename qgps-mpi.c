@@ -13,13 +13,42 @@ qgps_block_t * qgps_current_transpose_block = NULL;
 qgps_block_t *qgps_transpose_blocks = NULL;
 ptrdiff_t qgps_local_size;
 
-fftw_plan qgps_plan, qgps_inverse_plan;
-
 int qgps_initialize_mpi(int argc, char **argv);
 int qgps_initialize_blocks();
 int qgps_cleanup_mpi();
 int qgps_broadcast_block(qgps_block_t *block, int src_task);
 int qgps_initialize_fftw();
+
+int qgps_dft_c2r(const complex *in, double *out) {
+        static complex *temporary = NULL;
+        if (!temporary)
+                temporary = fftw_alloc_complex(qgps_local_size);
+        memcpy(in, temporary, sizeof(complex) * qgps_local_size);
+
+        static fftw_plan plan = NULL;
+        if (!plan)
+                plan = fftw_mpi_dft_c2r_2d(QGPS_NX, QGPS_NY,
+                                                temporary, NULL,
+                                                FFTW_MEASURE);
+
+        return fftw_mpi_execute_dft_c2r(plan, temporary, out);
+}
+
+int qgps_dft_r2c(const complex *in, double *out) {
+        static double *temporary = NULL;
+        if (!temporary)
+                temporary = fftw_alloc_real(qgps_local_size);
+
+        memcpy(in, temporary, sizeof(double) * qgps_local_size);
+
+        static fftw_plan plan = NULL;
+        if (!plan)
+                plan = fftw_mpi_dft_r2c_2d(QGPS_NX, QGPS_NY,
+                                                temporary, NULL,
+                                                FFTW_MEASURE);
+
+        return fftw_mpi_execute_dft_r2c(plan, temporary, out);
+}
 
 int qgps_initialize(int argc, char **argv) {
         if (qgps_initialize_mpi(argc, argv))
@@ -94,17 +123,6 @@ int qgps_initialize_fftw() {
                                                         QGPS_COMM_WORLD,
                                                         &local_n0,
                                                         &local_0_start);
-
-        qgps_plan         = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY, 
-                                                                NULL, NULL,
-                                                                QGPS_COMM_WORLD,
-                                                                FFTW_ESTIMATE);
-
-        qgps_inverse_plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
-                                                                NULL, NULL,
-                                                                QGPS_COMM_WORLD,
-                                                                FFTW_ESTIMATE);
-
 
         qgps_current_block = &qgps_blocks[qgps_current_task];
         qgps_current_transpose_block = &qgps_transpose_blocks[qgps_current_task];

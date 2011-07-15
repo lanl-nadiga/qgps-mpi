@@ -33,8 +33,9 @@ extern qgps_block_t * qgps_current_block;
 extern qgps_block_t * qgps_current_transpose_block;
 extern ptrdiff_t qgps_local_size;
 
-/* FFTW task variables */
-extern fftw_plan qgps_plan, qgps_inverse_plan;
+/* FFTW execute functions */
+int qgps_dft_c2r(const complex *in, double *out);
+int qgps_dft_r2c(const double *in, complex *out);
 
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();
