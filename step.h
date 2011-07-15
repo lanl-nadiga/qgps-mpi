@@ -9,11 +9,13 @@ typedef enum {
         QGPS_INIT_DELTA_K,
 } qgps_init_type_t;
 
+qgps_init_type_t qgps_init_type_parse(char *name);
+
 // time step
 extern double qgps_time;
 extern const double qgps_time_start;
 extern const double qgps_time_end;
-extern const double qgps_time_step;
+extern double qgps_time_step;
 
 // gradient of stream function in spectral space
 extern complex  *psi_x,
