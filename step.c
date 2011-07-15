@@ -88,6 +88,7 @@ int qgps_step() {
         }
 
         qgps_time += qgps_time_step;
+        update_psi();
 
         return 0;
 }
