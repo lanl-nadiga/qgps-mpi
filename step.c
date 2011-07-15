@@ -62,25 +62,25 @@ int qgps_step() {
         if (!work)
                 work = fftw_alloc_complex(qgps_local_size);
 
-        advection(work,omega);
+        advection(work, omega);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] = -work[idx] / 6.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 3.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 3.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 6.0;
