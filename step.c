@@ -1,9 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 #include "step.h"
 
 const double qgps_time_start = 0.0;
 const double qgps_time_end   = 1.0;
-const double qgps_time_step  = 0.1;
+double qgps_time_step  = 0.1;
 double qgps_time = 0;
 
 complex *psi_x;
@@ -94,10 +95,10 @@ int qgps_step() {
 }
 
 int update_psi() {
-        int     nx = qgps_current_transpose_block->x_length,
-                ny = qgps_current_transpose_block->y_length,
-                xb = qgps_current_transpose_block->x_begin,
-                yb = qgps_current_transpose_block->y_begin;
+        int     nx = qgps_current_complex_block->x_length,
+                ny = qgps_current_complex_block->y_length,
+                xb = qgps_current_complex_block->x_begin,
+                yb = qgps_current_complex_block->y_begin;
 
         int k1, k2, k_sq, idx;
 
@@ -122,10 +123,10 @@ int update_psi() {
 }
 
 int advection(complex *tracer_advt, complex *tracer) {
-        int     nx = qgps_current_transpose_block->x_length,
-                ny = qgps_current_transpose_block->y_length,
-                xb = qgps_current_transpose_block->x_begin,
-                yb = qgps_current_transpose_block->y_begin;
+        int     nx = qgps_current_complex_block->x_length,
+                ny = qgps_current_complex_block->y_length,
+                xb = qgps_current_complex_block->x_begin,
+                yb = qgps_current_complex_block->y_begin;
 
         static complex *tracer_kx = NULL,
                        *tracer_ky = NULL;
@@ -199,7 +200,7 @@ void qgps_init_delta_k() {
                 omega[idx] = 0.0;
         }
 
-        if(qgps_current_block->x_begin == 0) {
+        if(qgps_current_real_block->x_begin == 0) {
                 omega[QGPS_NX+1] = 1.0;
         }
 }
@@ -222,3 +223,12 @@ int init_omega(qgps_init_type_t init_type) {
         }
 }
 
+qgps_init_type_t qgps_init_type_parse(const char *string) {
+        if(!strcmp("delta", string))
+                return QGPS_INIT_DELTA_K;
+        else {
+                fprintf(stderr, "Unknown init type %s\n", string);
+                qgps_exit();
+                return -1;
+        }
+}
