@@ -4,7 +4,7 @@
 
 const double qgps_time_start = 0.0;
 const double qgps_time_end   = 1.0;
-const double qgps_time_step  = 0.1;
+double qgps_time_step  = 0.1;
 double qgps_time = 0;
 
 complex *psi_x;
