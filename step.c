@@ -1,9 +1,10 @@
 #include <stdlib.h>
+#include <string.h>
 #include "step.h"
 
 const double qgps_time_start = 0.0;
 const double qgps_time_end   = 1.0;
-const double qgps_time_step  = 0.1;
+double qgps_time_step  = 0.1;
 double qgps_time = 0;
 
 complex *psi_x;
@@ -62,25 +63,25 @@ int qgps_step() {
         if (!work)
                 work = fftw_alloc_complex(qgps_local_size);
 
-        advection(work,omega);
+        advection(work, omega);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] = -work[idx] / 6.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 3.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step / 2.0;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 3.0;
                 work[idx] = omega[idx] - work[idx] * qgps_time_step;
         }
-        advection(work,work);
+        advection(work, work);
 
         for (int idx = 0; idx < qgps_local_size; idx++) {
                 omega_t[idx] -= work[idx] / 6.0;
@@ -88,6 +89,7 @@ int qgps_step() {
         }
 
         qgps_time += qgps_time_step;
+        update_psi();
 
         return 0;
 }
@@ -221,3 +223,12 @@ int init_omega(qgps_init_type_t init_type) {
         }
 }
 
+qgps_init_type_t qgps_init_type_parse(const char *string) {
+        if(!strcmp("delta", string))
+                return QGPS_INIT_DELTA_K;
+        else {
+                fprintf(stderr, "Unknown init type %s\n", string);
+                qgps_exit();
+                return -1;
+        }
+}

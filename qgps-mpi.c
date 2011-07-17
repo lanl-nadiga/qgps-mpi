@@ -23,6 +23,8 @@ int qgps_broadcast_block(qgps_block_t *block, int src_task);
 int qgps_initialize_fftw();
 
 int qgps_initialize(int argc, char **argv) {
+        if (qgps_configure(argc, argv))
+                return 1;
         if (qgps_initialize_mpi(argc, argv))
                 return 1;
         if (qgps_initialize_blocks())
