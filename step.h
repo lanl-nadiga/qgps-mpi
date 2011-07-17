@@ -10,6 +10,9 @@ typedef enum {
 } qgps_init_type_t;
 
 qgps_init_type_t qgps_init_type_parse(const char *name);
+extern complex *qgps_init_data;
+
+extern qgps_init_type_t qgps_init_type;
 
 // time step
 extern double qgps_time;

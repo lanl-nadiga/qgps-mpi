@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iniparser.h>
+#include "step.h"
 #include "qgps-mpi.h"
 
-extern qgps_init_type_t qgps_init_type;
 extern complex *qgps_init_data;
 extern char *qgps_output_directory;
 extern char *qgps_configuration_file;

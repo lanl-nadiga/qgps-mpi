@@ -1,3 +1,4 @@
+#include "step.h"
 #include "qgps-input.h"
 
 qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
