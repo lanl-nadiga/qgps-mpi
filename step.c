@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "step.h"
 
 const double qgps_time_start = 0.0;
