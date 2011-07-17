@@ -1,5 +1,6 @@
 #include "qgps-mpi.h"
 #include "step.h"
+#include <string.h>
 #include <stdlib.h>
 
 const int QGPS_NX = 64, QGPS_NY = 64;
