@@ -35,7 +35,7 @@ int qgps_dft_c2r(const complex *in, double *out) {
         return fftw_mpi_execute_dft_c2r(plan, temporary, out);
 }
 
-int qgps_dft_r2c(const complex *in, double *out) {
+int qgps_dft_r2c(const double *in, complex *out) {
         static double *temporary = NULL;
         if (!temporary)
                 temporary = fftw_alloc_real(qgps_local_size);
