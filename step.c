@@ -222,7 +222,7 @@ int init_omega(qgps_init_type_t init_type) {
         }
 }
 
-qgps_init_type qgps_init_type_parse(const char *string) {
+qgps_init_type_t qgps_init_type_parse(const char *string) {
         if(!strcmp("delta", string))
                 return QGPS_INIT_DELTA_K;
         else {
