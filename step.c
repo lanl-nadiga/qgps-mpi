@@ -93,10 +93,10 @@ int qgps_step() {
 }
 
 int update_psi() {
-        int     nx = qgps_current_transpose_block->x_length,
-                ny = qgps_current_transpose_block->y_length,
-                xb = qgps_current_transpose_block->x_begin,
-                yb = qgps_current_transpose_block->y_begin;
+        int     nx = qgps_current_complex_block->x_length,
+                ny = qgps_current_complex_block->y_length,
+                xb = qgps_current_complex_block->x_begin,
+                yb = qgps_current_complex_block->y_begin;
 
         int k1, k2, k_sq, idx;
 
@@ -121,10 +121,10 @@ int update_psi() {
 }
 
 int advection(complex *tracer_advt, complex *tracer) {
-        int     nx = qgps_current_transpose_block->x_length,
-                ny = qgps_current_transpose_block->y_length,
-                xb = qgps_current_transpose_block->x_begin,
-                yb = qgps_current_transpose_block->y_begin;
+        int     nx = qgps_current_complex_block->x_length,
+                ny = qgps_current_complex_block->y_length,
+                xb = qgps_current_complex_block->x_begin,
+                yb = qgps_current_complex_block->y_begin;
 
         static complex *tracer_kx = NULL,
                        *tracer_ky = NULL;
@@ -198,7 +198,7 @@ void qgps_init_delta_k() {
                 omega[idx] = 0.0;
         }
 
-        if(qgps_current_block->x_begin == 0) {
+        if(qgps_current_real_block->x_begin == 0) {
                 omega[QGPS_NX+1] = 1.0;
         }
 }
