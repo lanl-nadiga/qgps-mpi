@@ -1,5 +1,12 @@
 #include "qgps-input.h"
 
+qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
+complex *qgps_init_data = NULL;
+char *qgps_output_directory = NULL;
+char *qgps_configuration_file = NULL;
+int qgps_nx = 32;
+int qgps_ny = 32;
+
 const struct option options[] = {
         {"help", 1, 0, 'h'},
         {"configuration", 1, 0, 'f'},
