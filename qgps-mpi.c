@@ -28,11 +28,13 @@ int qgps_dft_c2r(const complex *in, double *out) {
 
         static fftw_plan plan = NULL;
         if (!plan)
-                plan = fftw_mpi_dft_c2r_2d(QGPS_NX, QGPS_NY,
+                plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
                                                 temporary, NULL,
+                                                QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
 
-        return fftw_mpi_execute_dft_c2r(plan, temporary, out);
+        fftw_mpi_execute_dft_c2r(plan, temporary, out);
+        return 0;
 }
 
 int qgps_dft_r2c(const double *in, complex *out) {
@@ -44,11 +46,13 @@ int qgps_dft_r2c(const double *in, complex *out) {
 
         static fftw_plan plan = NULL;
         if (!plan)
-                plan = fftw_mpi_dft_r2c_2d(QGPS_NX, QGPS_NY,
+                plan = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY,
                                                 temporary, NULL,
+                                                QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
 
-        return fftw_mpi_execute_dft_r2c(plan, temporary, out);
+        fftw_mpi_execute_dft_r2c(plan, temporary, out);
+        return 0;
 }
 
 int qgps_initialize(int argc, char **argv) {
