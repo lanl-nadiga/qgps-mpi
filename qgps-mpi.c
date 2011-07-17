@@ -25,7 +25,6 @@ int qgps_dft_c2r(const complex *in, double *out) {
         static complex *temporary = NULL;
         if (!temporary)
                 temporary = fftw_alloc_complex(qgps_local_size);
-        memcpy(temporary, in, sizeof(complex) * qgps_local_size);
 
         static fftw_plan plan = NULL;
         if (!plan)
@@ -33,6 +32,8 @@ int qgps_dft_c2r(const complex *in, double *out) {
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
+
+        memcpy(temporary, in, sizeof(complex) * qgps_local_size);
 
         fftw_mpi_execute_dft_c2r(plan, temporary, out);
         return 0;
@@ -43,14 +44,14 @@ int qgps_dft_r2c(const double *in, complex *out) {
         if (!temporary)
                 temporary = fftw_alloc_real(qgps_local_size*2);
 
-        memcpy(temporary, in, sizeof(double) * qgps_local_size*2);
-
         static fftw_plan plan = NULL;
         if (!plan)
                 plan = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY,
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
+
+        memcpy(temporary, in, sizeof(double) * qgps_local_size * 2);
 
         fftw_mpi_execute_dft_r2c(plan, temporary, out);
         return 0;
