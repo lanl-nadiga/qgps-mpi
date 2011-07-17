@@ -30,7 +30,7 @@ int qgps_dft_c2r(const complex *in, double *out) {
         static fftw_plan plan = NULL;
         if (!plan)
                 plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
-                                                temporary, NULL,
+                                                temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
 
@@ -41,14 +41,14 @@ int qgps_dft_c2r(const complex *in, double *out) {
 int qgps_dft_r2c(const double *in, complex *out) {
         static double *temporary = NULL;
         if (!temporary)
-                temporary = fftw_alloc_real(qgps_local_size);
+                temporary = fftw_alloc_real(qgps_local_size*2);
 
-        memcpy(temporary, in, sizeof(double) * qgps_local_size);
+        memcpy(temporary, in, sizeof(double) * qgps_local_size*2);
 
         static fftw_plan plan = NULL;
         if (!plan)
                 plan = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY,
-                                                temporary, NULL,
+                                                temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE);
 
@@ -57,8 +57,8 @@ int qgps_dft_r2c(const double *in, complex *out) {
 }
 
 int qgps_initialize(int argc, char **argv) {
-        if (qgps_configure(argc, argv))
-                return 1;
+//        if (qgps_configure(argc, argv))
+//                return 1;
         if (qgps_initialize_mpi(argc, argv))
                 return 1;
         if (qgps_initialize_blocks())
@@ -179,7 +179,7 @@ int qgps_initialize_fftw() {
         block->y_begin  = 0;
         block->y_end    = QGPS_NY;
         block->y_length = QGPS_NY;
-        block->size     = qgps_local_size;
+        block->size     = 2*qgps_local_size;
 
         /*
          * COMPLEX BLOCKS:

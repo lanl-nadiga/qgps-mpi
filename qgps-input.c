@@ -42,6 +42,7 @@ char next_option(int argc, char **argv, int *option_index) {
 int qgps_configure(int argc, char **argv) {
         int i = 0;
         for (char c = 0; c = next_option(argc, argv, &i) != -1; ) {
+                printf("%c\n", c);
                 if (c == 'h') {
                         fprintf(stdout, "help output\n");
                         exit(0);
