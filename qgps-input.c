@@ -136,9 +136,6 @@ int number_of_options() {
 
         return n;
 }
-int option_index(const struct option *o) {
-        return (int)(o - options) / sizeof(struct option);
-}
 char *section() {
         return "configuration";
 }
@@ -151,7 +148,7 @@ char *sectioned_name(const struct option *o) {
         if (section_length < 0)
                 section_length = strlen(section());
 
-        int i = option_index(o);
+        int i = o - options;
         if (!names[i]) {
                 names[i] = malloc(section_length + strlen(o->name) + 2);
                 strcpy(names[i], section());
