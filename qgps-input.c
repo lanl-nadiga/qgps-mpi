@@ -1,7 +1,7 @@
 #include "qgps-input.h"
 
 const struct option options[] = {
-        {"help", 1, 0, 'h'},
+        {"help", 0, 0, 'h'},
         {"configuration", 1, 0, 'f'},
         {"write-configuration", 1, 0, 'F'},
         {"initialize-type", 1, 0, 'i'},
