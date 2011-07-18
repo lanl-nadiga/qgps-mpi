@@ -30,6 +30,7 @@ int qgps_option_read(const struct option *o);
 
 const struct option * option_by_name(const char *name);
 const struct option * option_by_flag(const char flag);
+char *section();
 char * sectioned_name(const struct option *o);
 int number_of_options();
 
@@ -100,12 +101,18 @@ const struct option *option_by_flag(char flag) {
 
         return NULL;
 }
+int config_initialize() {
+        config = dictionary_new(number_of_options());
+        iniparser_setstring(config, section(), "");
+
+        return 0;
+}
 int qgps_option_set(const struct option *o, char *value) {
         if (!o || !value)
                 return 0;
 
         if (!config)
-                config = dictionary_new(number_of_options());
+                config_initialize();
 
         iniparser_set(config, sectioned_name(o), value);
 }
