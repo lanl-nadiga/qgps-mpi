@@ -181,7 +181,7 @@ int qgps_initialize_fftw() {
         block->id       = qgps_current_task;
         block->x_begin  = local_0_start;
         block->x_end    = block->x_begin + local_n0;
-        block->x_length = qgps_local_size / QGPS_NY;
+        block->x_length = local_n0;
         block->y_begin  = 0;
         block->y_end    = QGPS_NY;
         block->y_length = QGPS_NY;
@@ -223,14 +223,15 @@ int qgps_initialize_fftw() {
          *             half the number of reals per column! )
          *
          */
+
         block = qgps_current_complex_block;
         block->id       = qgps_current_task;
         block->x_begin  = 0;
         block->x_end    = QGPS_NX;
         block->x_length = QGPS_NX;
         block->y_begin  = local_0_start;
-        block->y_end    = block->y_begin + local_n0 / 2 + 1;
-        block->y_length = qgps_local_size / QGPS_NX;
+        block->y_end    = block->y_begin + qgps_local_size / QGPS_NX;
+        block->y_length = block->y_end - block->y_begin;;
         block->size     = qgps_local_size;
 
         MPI_Barrier(QGPS_COMM_WORLD);
