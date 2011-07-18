@@ -54,6 +54,11 @@ int qgps_dft_r2c(const double *in, complex *out) {
         memcpy(temporary, in, sizeof(double) * qgps_local_size * 2);
 
         fftw_mpi_execute_dft_r2c(plan, temporary, out);
+        // normalize
+        for(int idx = 0; idx < qgps_local_size; idx++) {
+                out[idx] /= QGPS_NX*QGPS_NY;
+        }
+
         return 0;
 }
 
