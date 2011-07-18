@@ -28,13 +28,13 @@ const struct option * option_by_name(const char *name);
 char * sectioned_name(const struct option *o);
 int number_of_options();
 
-char next_option(int argc, char **argv, int *option_index) {
-        return getopt_long(argc, argv, option_string, options, option_index);
+char next_option(char *c, int argc, char **argv, int *option_index) {
+        return *c = getopt_long(argc, argv, option_string, options, option_index);
 }
 
 int qgps_configure(int argc, char **argv) {
         int i = 0;
-        for (char c = 0; c = next_option(argc, argv, &i) != -1; ) {
+        for (char c = 0; next_option(&c, argc, argv, &i) != -1; ) {
                 if (c == 'h') {
                         fprintf(stdout, "help output\n");
                         exit(0);
