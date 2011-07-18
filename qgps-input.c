@@ -126,7 +126,14 @@ double qgps_option_getdouble(const struct option *o) {
                 return 0;
         }
 
-        return iniparser_getdouble(config, sectioned_name(o), 0);
+        char *s = qgps_option_get(o), *end = s;
+        double d = strtod(s, &end);
+        if (*end || end == s) {
+                fprintf(stderr, "WARNING: getdouble() failed on %s; returning NAN\n", o->name);
+                return NAN;
+        }
+
+        return d;
 }
 int qgps_option_getint(const struct option *o) {
         if (!o) {
@@ -134,7 +141,14 @@ int qgps_option_getint(const struct option *o) {
                 return 0;
         }
 
-        return iniparser_getint(config, sectioned_name(o), 0);
+        char *s = qgps_option_get(o), *end = s;
+        int i = strtol(s, &end, 10);
+        if (*end || end == s) {
+                fprintf(stderr, "WARNING: getint() failed on %s; returning 0\n", o->name);
+                return 0;
+        }
+
+        return i;
 }
 int number_of_options() {
         static int n = -1;
