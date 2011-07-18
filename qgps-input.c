@@ -29,11 +29,15 @@ int qgps_option_set(const struct option *o, char *value);
 int qgps_option_read(const struct option *o);
 
 const struct option * option_by_name(const char *name);
+const struct option * option_by_flag(const char flag);
 char * sectioned_name(const struct option *o);
 int number_of_options();
 
-char next_option(char *c, int argc, char **argv, int *option_index) {
-        return *c = getopt_long(argc, argv, option_string, options, option_index);
+char next_option(char * const c, const int argc, char * const *argv, int * const index) {
+        *c = getopt_long(argc, argv, option_string, options, index);
+        *index = option_by_flag(*c) - options;
+
+        return *c;
 }
 
 int qgps_configure(int argc, char **argv) {
