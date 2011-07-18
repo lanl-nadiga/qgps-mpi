@@ -1,4 +1,8 @@
 #include "qgps-input.h"
+#include <math.h>
+#include <getopt.h>
+#include <iniparser.h>
+#include <stdio.h>
 
 const struct option options[] = {
         {"help", 0, 0, 'h'},
