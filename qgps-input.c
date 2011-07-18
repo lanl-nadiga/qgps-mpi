@@ -151,6 +151,7 @@ char *sectioned_name(const struct option *o) {
         int i = o - options;
         if (!names[i]) {
                 names[i] = malloc(section_length + strlen(o->name) + 2);
+
                 strcpy(names[i], section());
                 strcat(names[i], ":");
                 strcat(names[i], o->name);
