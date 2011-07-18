@@ -20,6 +20,7 @@ char *config_output = NULL;
 int qgps_config_load(char *file);
 int qgps_config_read();
 
+char *qgps_option_get(const struct option *o);
 int qgps_option_set(const struct option *o, char *value);
 int qgps_option_read(const struct option *o);
 
@@ -102,7 +103,8 @@ int qgps_option_set(const struct option *o, char *value) {
 }
 int qgps_config_read() {
         for (char *o = (char*)options; *o; o += sizeof(struct option))
-                qgps_option_read(option_at(o));
+                if (qgps_option_get(option_at(o)))
+                        qgps_option_read(option_at(o));
 }
 char *qgps_option_get(const struct option *o) {
         if (!o)
