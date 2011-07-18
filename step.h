@@ -20,15 +20,14 @@ extern const double qgps_time_start;
 extern const double qgps_time_end;
 extern double qgps_time_step;
 
-// gradient of stream function in spectral space
-extern complex  *psi_x,
-                *psi_y;
-// vorticity in spectral space
+// vorticity in Fourier space
 extern complex  *omega;
 
 int qgps_step_init();
 int qgps_step_free();
 int qgps_step();
+
+double l2_norm_squared(complex *f);
 
 #endif
 
