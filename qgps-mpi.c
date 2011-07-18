@@ -31,7 +31,7 @@ int qgps_dft_c2r(const complex *in, double *out) {
                 plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
-                                                FFTW_MEASURE);
+                                                FFTW_MEASURE | FFTW_MPI_TRANSPOSED_IN);
 
         memcpy(temporary, in, sizeof(complex) * qgps_local_size);
 
@@ -49,7 +49,7 @@ int qgps_dft_r2c(const double *in, complex *out) {
                 plan = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY,
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
-                                                FFTW_MEASURE);
+                                                FFTW_MEASURE | FFTW_MPI_TRANSPOSED_OUT);
 
         memcpy(temporary, in, sizeof(double) * qgps_local_size * 2);
 
