@@ -17,7 +17,7 @@ int qgps_open() {
                         MPI_MODE_CREATE | MPI_MODE_WRONLY,
                         MPI_INFO_NULL, &qgps_output_file);
 
-        MPI_File_set_view(qgps_output_file, qgps_current_block->y_begin * QGPS_NX,
+        MPI_File_set_view(qgps_output_file, qgps_current_real_block->y_begin * QGPS_NX,
                         MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL);
 }
 
@@ -31,7 +31,7 @@ int qgps_write() {
         if (!omega_real)
                 omega_real = fftw_alloc_real(qgps_local_size * 2);
 
-        fftw_mpi_execute_dft_c2r(qgps_inverse_plan, omega, omega_real);
+        qgps_dft_c2r(omega, omega_real);
 
         MPI_File_write(qgps_output_file, omega_real, qgps_local_size * 2,
                         MPI_DOUBLE, MPI_STATUS_IGNORE);

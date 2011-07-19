@@ -1,5 +1,5 @@
 CFLAGS=-std=c99 -O2
-LD_FLAGS=-lfftw3_mpi -lfftw3 -lmpi -lm
+LD_FLAGS=-lfftw3_mpi -lfftw3 -lmpi -lm -liniparser
 
 SOURCE=$(wildcard *.c)
 OBJECTS=$(SOURCE:.c=.o)

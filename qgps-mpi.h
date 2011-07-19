@@ -9,6 +9,7 @@
 #include <fftw3-mpi.h>
 #include "step.h"
 #include "io.h"
+#include "qgps-input.h"
 
 /* domain size */
 extern const int QGPS_NX, QGPS_NY;
@@ -23,19 +24,22 @@ typedef struct {
         int size;
 } qgps_block_t;
 
-extern qgps_block_t *qgps_blocks;
-extern qgps_block_t *qgps_transpose_blocks;
+extern qgps_block_t * qgps_real_blocks;
+extern qgps_block_t * qgps_complex_blocks;
+extern qgps_block_t * qgps_current_real_block;
+extern qgps_block_t * qgps_current_complex_block;
+
+extern ptrdiff_t qgps_local_size;
 
 /* MPI task variables */
 extern MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
+extern int qgps_is_master_task;
 
-extern qgps_block_t * qgps_current_block;
-extern qgps_block_t * qgps_current_transpose_block;
-extern ptrdiff_t qgps_local_size;
 
-/* FFTW task variables */
-extern fftw_plan qgps_plan, qgps_inverse_plan;
+/* FFTW execute functions */
+int qgps_dft_c2r(const complex *in, double *out);
+int qgps_dft_r2c(const double *in, complex *out);
 
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();
