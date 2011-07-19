@@ -61,9 +61,9 @@ int qgps_dft_r2c(const double *in, complex *out) {
 }
 
 int qgps_initialize(int argc, char **argv) {
-//        if (qgps_configure(argc, argv))
-//                return 1;
         if (qgps_initialize_mpi(argc, argv))
+                return 1;
+        if (qgps_configure(argc, argv))
                 return 1;
         if (qgps_initialize_blocks())
                 return 1;
