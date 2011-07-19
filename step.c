@@ -25,7 +25,7 @@ int qgps_step_init() {
 
         qgps_time = qgps_time_start;
 
-        init_omega(QGPS_INIT_DELTA_K);
+        init_omega(QGPS_INIT_PATCHES);
 
         return 0;
 }
@@ -84,6 +84,10 @@ int qgps_step() {
                 omega_t[idx] -= work[idx] / 6.0;
                 omega[idx] += omega_t[idx] * qgps_time_step;
         }
+
+        double fnorm = l2_norm_squared(omega_t);
+
+        fprintf(stderr, "MAGNITUDE OF FORCING: %1.10lf\n", fnorm);
 
         qgps_time += qgps_time_step;
 
@@ -161,7 +165,6 @@ double l2_norm_squared(complex *f) {
 
         return norm;
 }
-
 
 int calc_vel(complex *vorticity, complex *uvel, complex *vvel) {
         int idx;
@@ -293,6 +296,40 @@ void qgps_init_delta_k() {
         fftw_free(omega_real);
 }
 
+void qgps_init_patches() {
+        /*
+         * Initialize a delta funciton at a specific wave number
+         */
+        int idx, pad = 2 - qgps_ny%2;
+
+        double a, b;
+
+        int kx = 4, ky = 4;;
+
+        complex k_amp = 0.5 + 0.5*I;
+
+        int ib = qgps_current_real_block->x_begin;
+        int jb = qgps_current_real_block->y_begin;
+        int ie = qgps_current_real_block->x_end;
+        int je = qgps_current_real_block->y_end;
+
+        double *omega_real = fftw_alloc_real(qgps_local_size*2);
+
+        for(int i = ib; i < ie; i++)
+        for(int j = jb; j < je; j++) {
+                a = 2*M_PI*i*kx/(double)qgps_nx;
+                b = 2*M_PI*j*ky/(double)qgps_ny;
+                idx = (i-ib)*(qgps_nx + pad) + (j-jb);
+                omega_real[idx] = cos(a)
+                                + cos(b)
+                                + cos(a)*cos(b);
+        }
+
+        qgps_dft_r2c(omega_real,omega);
+
+        fftw_free(omega_real);
+}
+
 
 int init_omega(qgps_init_type_t init_type) {
         switch (init_type) {
@@ -302,6 +339,9 @@ int init_omega(qgps_init_type_t init_type) {
                         break;
                 case QGPS_INIT_DELTA_K:
                         qgps_init_delta_k();
+                        break;
+                case QGPS_INIT_PATCHES:
+                        qgps_init_patches();
                         break;
                 default:
                         fprintf(stderr,"unknown init option.\n");
