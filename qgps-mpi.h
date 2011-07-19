@@ -10,9 +10,6 @@
 #include "step.h"
 #include "qgps-input.h"
 
-/* domain size */
-extern const int QGPS_NX, QGPS_NY;
-
 /* local domain block */
 typedef struct {
         int id;

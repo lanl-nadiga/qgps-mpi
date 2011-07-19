@@ -3,8 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-const int QGPS_NX = 64, QGPS_NY = 64;
-
 MPI_Comm QGPS_COMM_WORLD;
 int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks, qgps_is_master_task;
 
@@ -28,7 +26,7 @@ int qgps_dft_c2r(const complex *in, double *out) {
 
         static fftw_plan plan = NULL;
         if (!plan)
-                plan = fftw_mpi_plan_dft_c2r_2d(QGPS_NX, QGPS_NY,
+                plan = fftw_mpi_plan_dft_c2r_2d(qgps_nx, qgps_ny,
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE | FFTW_MPI_TRANSPOSED_IN);
@@ -46,7 +44,7 @@ int qgps_dft_r2c(const double *in, complex *out) {
 
         static fftw_plan plan = NULL;
         if (!plan)
-                plan = fftw_mpi_plan_dft_r2c_2d(QGPS_NX, QGPS_NY,
+                plan = fftw_mpi_plan_dft_r2c_2d(qgps_nx, qgps_ny,
                                                 temporary, out,
                                                 QGPS_COMM_WORLD,
                                                 FFTW_MEASURE | FFTW_MPI_TRANSPOSED_OUT);
@@ -56,7 +54,7 @@ int qgps_dft_r2c(const double *in, complex *out) {
         fftw_mpi_execute_dft_r2c(plan, temporary, out);
         // normalize
         for(int idx = 0; idx < qgps_local_size; idx++) {
-                out[idx] /= QGPS_NX*QGPS_NY;
+                out[idx] /= qgps_nx*qgps_ny;
         }
 
         return 0;
@@ -135,7 +133,7 @@ int qgps_initialize_fftw() {
 
         fftw_mpi_init();
 
-        qgps_local_size = fftw_mpi_local_size_2d(QGPS_NX, QGPS_NY/2 + 1,
+        qgps_local_size = fftw_mpi_local_size_2d(qgps_nx, qgps_ny/2 + 1,
                                                         QGPS_COMM_WORLD,
                                                         &local_n0,
                                                         &local_0_start);
@@ -185,8 +183,8 @@ int qgps_initialize_fftw() {
         block->x_end    = block->x_begin + local_n0;
         block->x_length = local_n0;
         block->y_begin  = 0;
-        block->y_end    = QGPS_NY;
-        block->y_length = QGPS_NY;
+        block->y_end    = qgps_ny;
+        block->y_length = qgps_ny;
         block->size     = 2*qgps_local_size;
 
         /*
@@ -229,10 +227,10 @@ int qgps_initialize_fftw() {
         block = qgps_current_complex_block;
         block->id       = qgps_current_task;
         block->x_begin  = 0;
-        block->x_end    = QGPS_NX;
-        block->x_length = QGPS_NX;
+        block->x_end    = qgps_nx;
+        block->x_length = qgps_nx;
         block->y_begin  = local_0_start;
-        block->y_end    = block->y_begin + qgps_local_size / QGPS_NX;
+        block->y_end    = block->y_begin + qgps_local_size / qgps_nx;
         block->y_length = block->y_end - block->y_begin;;
         block->size     = qgps_local_size;
 

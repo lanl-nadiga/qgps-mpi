@@ -1,10 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
-#include "step.h"
+#include "qgps-mpi.h"
 
 const double qgps_time_start = 0.0;
 const double qgps_time_end   = 1.0;
-double qgps_time_step  = 0.001;
 double qgps_time = 0;
 
 complex *omega;
@@ -105,7 +104,7 @@ int gradient(complex *f, complex *dfdx, complex *dfdy) {
                   k1 = i+ib;
                 }
                 else {
-                  k1 = i+ib - QGPS_NX;
+                  k1 = i+ib - qgps_nx;
                 }
                 k2 = j+jb;
 
@@ -138,10 +137,10 @@ double l2_norm_squared(complex *f) {
                 if(k2 == 0) {
                   norm += cabs_sqr(f[idx]);
                 }
-                else if(QGPS_NX%2 == 1 && k1 == QGPS_NX/2 + 1) {
+                else if(qgps_nx%2 == 1 && k1 == qgps_nx/2 + 1) {
                   norm += cabs_sqr(f[idx]);
                 }
-                else if(QGPS_NY%2 == 1 && k2 == QGPS_NY/2 + 1) {
+                else if(qgps_ny%2 == 1 && k2 == qgps_ny/2 + 1) {
                   norm += cabs_sqr(f[idx]);
                 }
                 else {
@@ -180,7 +179,7 @@ int calc_vel(complex *vorticity, complex *uvel, complex *vvel) {
                   k1 = i+ib;
                 }
                 else {
-                  k1 = i+ib - QGPS_NX;
+                  k1 = i+ib - qgps_nx;
                 }
                 k2 = j+jb;
                 k_sq = (k1 * k1) + (k2 * k2);
@@ -261,8 +260,8 @@ void qgps_init_delta_k() {
         }
 
         if(qgps_current_real_block->x_begin == 0) {
-                omega[QGPS_NX+1] = 0.5 + 0.5*I;
-                omega[2*QGPS_NX+1] = -0.5 + 0.5*I;
+                omega[qgps_nx+1] = 0.5 + 0.5*I;
+                omega[2*qgps_nx+1] = -0.5 + 0.5*I;
         }
 }
 
