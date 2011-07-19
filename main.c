@@ -10,10 +10,8 @@ int main(int argc, char **argv) {
         }
 
         while(qgps_time < qgps_time_end) {
-                qgps_open();
                 qgps_step();
-                qgps_write();
-                qgps_close();
+                qgps_output();
         }
 
         if (qgps_cleanup()) {

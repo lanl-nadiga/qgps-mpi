@@ -3,6 +3,9 @@
 
 MPI_File qgps_output_file;
 
+int qgps_output() {
+        return qgps_output_open() || qgps_output_write() || qgps_output_close();
+}
 int qgps_transpose_r(double *data) {
         static fftw_plan plan = NULL;
         if (!plan)
@@ -26,7 +29,7 @@ char *qgps_output_filename() {
         return s;
 }
 
-int qgps_open() {
+int qgps_output_open() {
         MPI_File_open(QGPS_COMM_WORLD, qgps_output_filename(),
                         MPI_MODE_CREATE | MPI_MODE_WRONLY,
                         MPI_INFO_NULL, &qgps_output_file);
@@ -35,11 +38,11 @@ int qgps_open() {
                         MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL);
 }
 
-int qgps_close() {
+int qgps_output_close() {
         return MPI_File_close(&qgps_output_file);
 }
 
-int qgps_write() {
+int qgps_output_write() {
         static double *omega_real = NULL;
 
         if (!omega_real)
