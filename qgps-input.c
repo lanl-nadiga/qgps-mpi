@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
-complex *qgps_init_data = NULL;
+double *qgps_init_data = NULL;
 char *qgps_output_directory = ".";
 char *qgps_configuration_file = NULL;
 int qgps_nx = 32;

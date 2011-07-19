@@ -11,7 +11,7 @@
 /* initialization type */
 extern qgps_init_type_t qgps_init_type;
 /* initialization data */
-extern complex *qgps_init_data;
+extern double *qgps_init_data;
 /* output directory */
 extern char *qgps_output_directory;
 /* input configuration file */
