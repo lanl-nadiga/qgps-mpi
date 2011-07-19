@@ -28,6 +28,8 @@ char *option_string = "hf:F:I:i:t:X:Y:D:";
 dictionary *config = NULL;
 char *config_output = NULL;
 
+int qgps_configure_broadcast();
+int qgps_configure_master(int argc, char **argv);
 
 int qgps_config_load(char *file);
 int qgps_config_read();
@@ -54,7 +56,7 @@ int qgps_configure(int argc, char **argv) {
                 if (qgps_configure_master(argc, argv))
                         return 1;
 
-        qgps_broadcast_configuration();
+        qgps_configure_broadcast();
 
         return 0;
 }
@@ -73,7 +75,7 @@ int qgps_configure_master(int argc, char **argv) {
         return qgps_config_read();
 }
 
-int qgps_broadcast_configuration() {
+int qgps_configure_broadcast() {
         MPI_Bcast(&qgps_init_type, sizeof(qgps_init_type_t),
                 MPI_BYTE, qgps_master_task, QGPS_COMM_WORLD);
 
