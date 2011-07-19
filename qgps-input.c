@@ -42,6 +42,15 @@ char next_option(char * const c, const int argc, char * const *argv, int * const
 }
 
 int qgps_configure(int argc, char **argv) {
+        if (qgps_is_master_task)
+                if (qgps_configure_master(argc, argv))
+                        return 1;
+
+        qgps_broadcast_configuration();
+
+        return 0;
+}
+int qgps_configure_master(int argc, char **argv) {
         int i = 0;
         for (char c = 0; next_option(&c, argc, argv, &i) != -1; ) {
                 if (c == 'h') {
@@ -54,6 +63,31 @@ int qgps_configure(int argc, char **argv) {
                         qgps_option_set(&options[i], optarg);
         }
         return qgps_config_read();
+}
+
+int qgps_broadcast_configuration() {
+        MPI_Bcast(&qgps_init_type, sizeof(qgps_init_type_t),
+                MPI_BYTE, qgps_master_task, QGPS_COMM_WORLD);
+
+        MPI_Bcast(&qgps_time_step, 1,
+                MPI_DOUBLE, qgps_master_task, QGPS_COMM_WORLD);
+        MPI_Bcast(&qgps_nx, 1,
+                MPI_DOUBLE, qgps_master_task, QGPS_COMM_WORLD);
+        MPI_Bcast(&qgps_ny, 1,
+                MPI_DOUBLE, qgps_master_task, QGPS_COMM_WORLD);
+
+        int length = 0;
+        if (qgps_current_task == qgps_master_task)
+                length = strlen(qgps_output_directory);
+        MPI_Bcast(&length, 1,
+                MPI_INT, qgps_master_task, QGPS_COMM_WORLD);
+
+        if (qgps_current_task != qgps_master_task)
+                qgps_output_directory = malloc((length + 1) * sizeof(char));
+        MPI_Bcast(&qgps_output_directory, (length + 1) * sizeof(char),
+                MPI_CHAR, qgps_master_task, QGPS_COMM_WORLD);
+
+        return 0;
 }
 
 int qgps_config_load(char *file) {
