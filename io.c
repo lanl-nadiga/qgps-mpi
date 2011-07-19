@@ -5,10 +5,12 @@ MPI_File qgps_output_file;
 
 char *qgps_output_filename() {
         static char *s = NULL;
-        if (!s)
-                s = malloc(256);
+        if (!s) {
+                s = malloc(strlen(qgps_output_directory) + strlen("/qgps-mpi.0000.bin") + 1);
+                strcpy(s, qgps_output_directory);
+        }
 
-        sprintf(s, "./qgps-mpi.%.4i.bin", (int)(qgps_time / qgps_time_step));
+        sprintf(s + strlen(qgps_output_directory), "/qgps-mpi.%.4i.bin", (int)(qgps_time / qgps_time_step));
         return s;
 }
 
@@ -17,7 +19,7 @@ int qgps_open() {
                         MPI_MODE_CREATE | MPI_MODE_WRONLY,
                         MPI_INFO_NULL, &qgps_output_file);
 
-        MPI_File_set_view(qgps_output_file, qgps_current_real_block->y_begin * QGPS_NX,
+        MPI_File_set_view(qgps_output_file, qgps_current_real_block->y_begin * qgps_nx,
                         MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL);
 }
 
