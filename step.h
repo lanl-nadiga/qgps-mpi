@@ -6,6 +6,7 @@
 typedef enum {
         QGPS_INIT_RESTART,
         QGPS_INIT_DELTA_K,
+        QGPS_INIT_PATCHES,
 } qgps_init_type_t;
 
 qgps_init_type_t qgps_init_type_parse(const char *name);
