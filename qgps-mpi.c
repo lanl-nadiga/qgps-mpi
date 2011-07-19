@@ -86,9 +86,9 @@ int qgps_cleanup() {
         return 0;
 }
 
-void qgps_exit() {
+void qgps_exit(int status) {
         qgps_cleanup();
-        exit(EXIT_FAILURE);
+        exit(status);
 }
 
 int qgps_initialize_mpi(int argc, char **argv) {

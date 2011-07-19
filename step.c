@@ -271,14 +271,14 @@ int init_omega(qgps_init_type_t init_type) {
         switch (init_type) {
                 case QGPS_INIT_RESTART:
                         fprintf(stderr,"init option not supported yet.\n");
-                        qgps_exit();
+                        qgps_exit(EXIT_FAILURE);
                         break;
                 case QGPS_INIT_DELTA_K:
                         qgps_init_delta_k();
                         break;
                 default:
                         fprintf(stderr,"unknown init option.\n");
-                        qgps_exit();
+                        qgps_exit(EXIT_FAILURE);
                         break;
         }
 }
@@ -288,7 +288,7 @@ qgps_init_type_t qgps_init_type_parse(const char *string) {
                 return QGPS_INIT_DELTA_K;
         else {
                 fprintf(stderr, "Unknown init type %s\n", string);
-                qgps_exit();
+                qgps_exit(EXIT_FAILURE);
                 return -1;
         }
 }

@@ -65,7 +65,8 @@ int qgps_configure_master(int argc, char **argv) {
         for (char c = 0; next_option(&c, argc, argv, &i) != -1; ) {
                 if (c == 'h') {
                         fprintf(stdout, "help output\n");
-                        exit(0);
+                        qgps_exit(EXIT_SUCCESS);
+                        return 0;
                 }
                 else if (c == 'f')
                         qgps_config_load(optarg);
@@ -240,7 +241,7 @@ int qgps_option_read(const struct option *o) {
         switch(o->val) {
         case 'h':
                 fprintf(stdout, "help output\n");
-                exit(0);
+                qgps_exit(EXIT_SUCCESS);
                 break;
         case 'f':
                 qgps_config_load(qgps_option_get(o));
