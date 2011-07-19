@@ -85,12 +85,12 @@ int qgps_broadcast_configuration() {
                 MPI_DOUBLE, qgps_master_task, QGPS_COMM_WORLD);
 
         int length = 0;
-        if (qgps_current_task == qgps_master_task)
+        if (qgps_is_master_task)
                 length = strlen(qgps_output_directory);
         MPI_Bcast(&length, 1,
                 MPI_INT, qgps_master_task, QGPS_COMM_WORLD);
 
-        if (qgps_current_task != qgps_master_task)
+        if (!qgps_is_master_task)
                 qgps_output_directory = malloc((length + 1) * sizeof(char));
         MPI_Bcast(&qgps_output_directory, (length + 1) * sizeof(char),
                 MPI_CHAR, qgps_master_task, QGPS_COMM_WORLD);

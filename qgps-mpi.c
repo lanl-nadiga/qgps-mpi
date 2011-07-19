@@ -6,7 +6,7 @@
 const int QGPS_NX = 64, QGPS_NY = 64;
 
 MPI_Comm QGPS_COMM_WORLD;
-int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks;
+int  qgps_current_task, qgps_master_task = 0, qgps_number_tasks, qgps_is_master_task;
 
 qgps_block_t * qgps_real_blocks                 = NULL;
 qgps_block_t * qgps_complex_blocks              = NULL;
@@ -97,6 +97,8 @@ int qgps_initialize_mpi(int argc, char **argv) {
 
         MPI_Comm_rank(QGPS_COMM_WORLD, &qgps_current_task);
         MPI_Comm_size(QGPS_COMM_WORLD, &qgps_number_tasks);
+
+        qgps_is_master_task = (qgps_current_task == qgps_master_task);
 
         return 0;
 }

@@ -33,6 +33,7 @@ extern ptrdiff_t qgps_local_size;
 /* MPI task variables */
 extern MPI_Comm QGPS_COMM_WORLD;
 extern int qgps_current_task, qgps_master_task, qgps_number_tasks;
+extern int qgps_is_master_task;
 
 
 /* FFTW execute functions */
