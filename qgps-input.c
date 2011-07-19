@@ -7,10 +7,11 @@
 
 qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
 complex *qgps_init_data = NULL;
-char *qgps_output_directory = NULL;
+char *qgps_output_directory = ".";
 char *qgps_configuration_file = NULL;
 int qgps_nx = 32;
 int qgps_ny = 32;
+double qgps_time_step  = 0.001;
 
 const struct option options[] = {
         {"help", 0, 0, 'h'},
@@ -65,7 +66,8 @@ int qgps_configure_master(int argc, char **argv) {
         for (char c = 0; next_option(&c, argc, argv, &i) != -1; ) {
                 if (c == 'h') {
                         fprintf(stdout, "help output\n");
-                        exit(0);
+                        qgps_exit(EXIT_SUCCESS);
+                        return 0;
                 }
                 else if (c == 'f')
                         qgps_config_load(optarg);
@@ -240,7 +242,7 @@ int qgps_option_read(const struct option *o) {
         switch(o->val) {
         case 'h':
                 fprintf(stdout, "help output\n");
-                exit(0);
+                qgps_exit(EXIT_SUCCESS);
                 break;
         case 'f':
                 qgps_config_load(qgps_option_get(o));

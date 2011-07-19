@@ -11,9 +11,6 @@
 #include "io.h"
 #include "qgps-input.h"
 
-/* domain size */
-extern const int QGPS_NX, QGPS_NY;
-
 /* local domain block */
 typedef struct {
         int id;
@@ -44,6 +41,6 @@ int qgps_dft_r2c(const double *in, complex *out);
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();
 
-void qgps_exit();
+void qgps_exit(int status);
 
 #endif
