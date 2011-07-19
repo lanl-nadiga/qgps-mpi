@@ -3,6 +3,18 @@
 
 MPI_File qgps_output_file;
 
+int qgps_transpose_r(double *data) {
+        static fftw_plan plan = NULL;
+        if (!plan)
+                plan = fftw_mpi_plan_transpose(qgps_ny, qgps_nx,
+                                data, data, QGPS_COMM_WORLD,
+                                FFTW_ESTIMATE | FFTW_MPI_TRANSPOSED_IN);
+
+        fftw_mpi_execute_r2r(plan, data, data);
+
+        return 0;
+}
+
 char *qgps_output_filename() {
         static char *s = NULL;
         if (!s) {
@@ -34,8 +46,16 @@ int qgps_write() {
                 omega_real = fftw_alloc_real(qgps_local_size * 2);
 
         qgps_dft_c2r(omega, omega_real);
+        qgps_transpose_r(omega_real);
 
-        MPI_File_write(qgps_output_file, omega_real, qgps_local_size * 2,
-                        MPI_DOUBLE, MPI_STATUS_IGNORE);
+        qgps_block_t *b = qgps_current_real_block;
+
+        int pad = 2 - qgps_ny % 2;
+        for (int j = b->y_begin; j < b->y_end; j++) {
+                int idx = (j - b->y_begin) * (qgps_nx + pad);
+
+                MPI_File_write(qgps_output_file, &omega_real[idx], qgps_nx,
+                                MPI_DOUBLE, MPI_STATUS_IGNORE);
+        }
         return 0;
 }
