@@ -8,7 +8,7 @@
 #include <complex.h>
 #include <fftw3-mpi.h>
 #include "step.h"
-#include "io.h"
+#include "qgps-output.h"
 #include "qgps-input.h"
 
 /* local domain block */

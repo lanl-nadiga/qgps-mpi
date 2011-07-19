@@ -1,5 +1,5 @@
-#ifndef _QGPS_IO_H
-#define _QGPS_IO_H
+#ifndef _QGPS_OUTPUT_H
+#define _QGPS_OUTPUT_H
 
 int qgps_output_open();
 int qgps_output_write();
