@@ -157,7 +157,7 @@ const struct option *option_by_flag(char flag) {
 }
 int config_initialize() {
         config = dictionary_new(number_of_options());
-        iniparser_setstring(config, section(), "");
+        iniparser_set(config, section(), "");
 
         return 0;
 }
