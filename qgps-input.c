@@ -6,8 +6,11 @@
 
 qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
 double *qgps_init_data = NULL;
+
 char *qgps_output_directory = ".";
 char *qgps_configuration_file = NULL;
+char *config_output = NULL;
+
 int qgps_nx = 32;
 int qgps_ny = 32;
 double qgps_time_step  = 0.001;
@@ -25,8 +28,8 @@ const struct option options[] = {
         {0, 0, 0, 0}
 };
 char *option_string = "hf:F:I:i:t:X:Y:D:";
+
 dictionary *config = NULL;
-char *config_output = NULL;
 
 int qgps_configure_broadcast();
 int qgps_configure_master(int argc, char **argv);
