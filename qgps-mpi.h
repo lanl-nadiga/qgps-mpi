@@ -37,6 +37,7 @@ extern int qgps_is_master_task;
 /* FFTW execute functions */
 int qgps_dft_c2r(const complex *in, double *out);
 int qgps_dft_r2c(const double *in, complex *out);
+int qgps_transpose_r(double *data);
 
 int qgps_initialize(int argc, char **argv);
 int qgps_cleanup();

@@ -60,6 +60,18 @@ int qgps_dft_r2c(const double *in, complex *out) {
         return 0;
 }
 
+int qgps_transpose_r(double *data) {
+        static fftw_plan plan = NULL;
+        if (!plan)
+                plan = fftw_mpi_plan_transpose(qgps_ny, qgps_nx,
+                                data, data, QGPS_COMM_WORLD,
+                                FFTW_ESTIMATE | FFTW_MPI_TRANSPOSED_IN);
+
+        fftw_mpi_execute_r2r(plan, data, data);
+
+        return 0;
+}
+
 int qgps_initialize(int argc, char **argv) {
         if (qgps_initialize_mpi(argc, argv))
                 return 1;

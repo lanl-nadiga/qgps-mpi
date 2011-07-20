@@ -6,17 +6,6 @@ MPI_File qgps_output_file;
 int qgps_output() {
         return qgps_output_open() || qgps_output_write() || qgps_output_close();
 }
-int qgps_transpose_r(double *data) {
-        static fftw_plan plan = NULL;
-        if (!plan)
-                plan = fftw_mpi_plan_transpose(qgps_ny, qgps_nx,
-                                data, data, QGPS_COMM_WORLD,
-                                FFTW_ESTIMATE | FFTW_MPI_TRANSPOSED_IN);
-
-        fftw_mpi_execute_r2r(plan, data, data);
-
-        return 0;
-}
 
 char *qgps_output_filename() {
         static char *s = NULL;
