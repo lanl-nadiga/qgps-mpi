@@ -1,4 +1,3 @@
-#include "step.h"
 #include "qgps-input.h"
 #include <math.h>
 #include <getopt.h>
@@ -275,5 +274,15 @@ int qgps_option_read(const struct option *o) {
         }
 
         return 0;
+}
+
+qgps_init_type_t qgps_init_type_parse(const char *string) {
+        if(!strcmp("delta", string))
+                return QGPS_INIT_DELTA_K;
+        else {
+                fprintf(stderr, "Unknown init type %s\n", string);
+                qgps_exit(EXIT_FAILURE);
+                return -1;
+        }
 }
 

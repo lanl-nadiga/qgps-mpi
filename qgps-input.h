@@ -8,6 +8,15 @@
 #include "step.h"
 #include "qgps-mpi.h"
 
+// omega initialization types
+typedef enum {
+        QGPS_INIT_RESTART,
+        QGPS_INIT_DELTA_K,
+        QGPS_INIT_PATCHES,
+} qgps_init_type_t;
+
+qgps_init_type_t qgps_init_type_parse(const char *name);
+
 /* initialization type */
 extern qgps_init_type_t qgps_init_type;
 /* initialization data */

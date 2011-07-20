@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 #include "qgps-mpi.h"
+#include "qgps-input.h"
 #include "step.h"
 
 #define M_PI 3.1415926535897932384626433832795028841971693993751058209749445923
@@ -350,12 +351,3 @@ int init_omega(qgps_init_type_t init_type) {
         }
 }
 
-qgps_init_type_t qgps_init_type_parse(const char *string) {
-        if(!strcmp("delta", string))
-                return QGPS_INIT_DELTA_K;
-        else {
-                fprintf(stderr, "Unknown init type %s\n", string);
-                qgps_exit(EXIT_FAILURE);
-                return -1;
-        }
-}
