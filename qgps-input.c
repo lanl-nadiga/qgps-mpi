@@ -5,6 +5,8 @@
 #include <stdio.h>
 
 qgps_init_type_t qgps_init_type = QGPS_INIT_DELTA_K;
+char *qgps_input_filename = NULL;
+MPI_File qgps_input_file = NULL;
 double *qgps_init_data = NULL;
 
 char *qgps_output_directory = ".";
@@ -14,6 +16,10 @@ char *config_output = NULL;
 int qgps_nx = 32;
 int qgps_ny = 32;
 double qgps_time_step  = 0.001;
+
+int qgps_input_open();
+int qgps_input_close();
+int qgps_input_read();
 
 const struct option options[] = {
         {"help", 0, 0, 'h'},
@@ -256,8 +262,7 @@ int qgps_option_read(const struct option *o) {
                 qgps_init_type = qgps_init_type_parse(qgps_option_get(o));
                 break;
         case 'I':
-                fprintf(stdout, "STUB: load initialization data from %s\n",
-                        qgps_option_get(o));
+                qgps_input_filename = qgps_option_get(o);
                 break;
         case 't':
                 qgps_time_step = qgps_option_getdouble(o);
@@ -278,7 +283,37 @@ int qgps_option_read(const struct option *o) {
 
         return 0;
 }
+int qgps_input() {
+        qgps_input_open();
+        qgps_input_read();
+        qgps_input_close();
+}
+int qgps_input_open() {
+        MPI_File_open(QGPS_COMM_WORLD, qgps_input_filename,
+                        MPI_MODE_RDONLY,
+                        MPI_INFO_NULL, &qgps_input_file);
 
+        MPI_File_set_view(qgps_input_file, qgps_current_real_block->y_begin * qgps_nx,
+                        MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL);
+}
+int qgps_input_close() {
+        return MPI_File_close(&qgps_input_file);
+}
+int qgps_input_read() {
+        qgps_init_data = fftw_alloc_real(qgps_local_size);
+
+        qgps_block_t *b = qgps_current_real_block;
+        int pad = 2 - qgps_ny % 2;
+        for (int j = b->y_begin; j < b->y_end; j++) {
+                int idx = (j - b->y_begin) * (qgps_nx + pad);
+
+                MPI_File_read(qgps_input_file, &qgps_init_data[idx], qgps_nx,
+                                MPI_DOUBLE, MPI_STATUS_IGNORE);
+        }
+
+        qgps_transpose_r(qgps_init_data);
+        return 0;
+}
 qgps_init_type_t qgps_init_type_parse(const char *string) {
         if(!strcmp("delta", string))
                 return QGPS_INIT_DELTA_K;
