@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <mpi.h>
 #include "qgps-mpi.h"
 
 MPI_File qgps_output_file;

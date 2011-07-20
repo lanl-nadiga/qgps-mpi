@@ -8,6 +8,4 @@ int qgps_output();
 
 char *qgps_output_filename();
 
-extern MPI_File qgps_output_file;
-
 #endif
