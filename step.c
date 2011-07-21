@@ -634,7 +634,7 @@ int init_omega(qgps_init_type_t init_type) {
                                 return 1;
                         break;
                 default:
-                        fprintf(stderr,"unknown init option.\n");
+                        fprintf(stderr, "ERROR: unknown omega initialization option.\n");
                         qgps_exit(EXIT_FAILURE);
                         return 1;
                         break;
