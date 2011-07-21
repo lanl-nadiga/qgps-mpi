@@ -25,7 +25,7 @@ MPI_File qgps_output_open_file(char *filename) {
                         MPI_INFO_NULL, &file))
                 return NULL;
 
-        if (MPI_File_set_view(file, qgps_current_real_block->y_begin * qgps_nx,
+        if (MPI_File_set_view(file, qgps_current_real_block->x_begin * qgps_nx * sizeof(double),
                         MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL))
                 return NULL;
 
@@ -82,8 +82,8 @@ int qgps_output_write_real(MPI_File file, double *data) {
                 return 1;
 
         int pad = 2 - qgps_ny % 2;
-        for (int j = b->y_begin; j < b->y_end; j++) {
-                int idx = (j - b->y_begin) * (qgps_nx + pad);
+        for (int j = b->x_begin; j < b->x_end; j++) {
+                int idx = (j - b->x_begin) * (qgps_nx + pad);
 
                 if (MPI_File_write(file, &data[idx], qgps_nx,
                                 MPI_DOUBLE, MPI_STATUS_IGNORE))
