@@ -59,7 +59,7 @@ int qgps_step_init() {
         for(int j = 0; j < ny; j++) {
                 int idx = j*nx + i;
 
-                if(i <= nx/2) {
+                if(i+ib <= nx/2) {
                   qgps_kx[idx] = i+ib;
                 }
                 else {
