@@ -520,12 +520,18 @@ int advection(complex *advt, complex *tracer, complex *uvel, complex *vvel) {
         if(!advt_real)
                 advt_real = fftw_alloc_real(qgps_local_size*2);
 
+        // compute the gradient of tracer
+        gradient(tracer, dtdx, dtdy);
+
+        // smooth fields
+        cutoff_high_frequencies(uvel);
+        cutoff_high_frequencies(vvel);
+        cutoff_high_frequencies(dtdx);
+        cutoff_high_frequencies(dtdy);
+
         // calculate the velocity in real space
         qgps_dft_c2r(uvel, uvel_real);
         qgps_dft_c2r(vvel, vvel_real);
-
-        // compute the gradient of tracer
-        gradient(tracer, dtdx, dtdy);
 
         // compute the tracer gradient in real space
         qgps_dft_c2r(dtdx, dtdx_real);
