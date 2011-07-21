@@ -607,6 +607,7 @@ int qgps_init_patches() {
                 omega[i] /= sqrt(total_energy);
 
         fftw_free(omega_real);
+        fftw_free(specific_vorticity);
 
         return 0;
 }
