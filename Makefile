@@ -1,4 +1,4 @@
-CFLAGS += -std=c99 -O2
+CFLAGS += -std=c99 -O2 -Wall
 LDFLAGS += -lfftw3_mpi -lfftw3 -lmpi -lm -liniparser
 
 SOURCE=$(wildcard *.c)
