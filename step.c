@@ -533,7 +533,7 @@ int advection(complex *advt, complex *tracer, complex *uvel, complex *vvel) {
 
         // calculate the advection in real space
         for (int idx = 0; idx < 2*qgps_local_size; idx++) {
-                advt_real[idx]  = uvel_real[idx] * dtdx_real[idx];
+                advt_real[idx]  = uvel_real[idx] * dtdx_real[idx]
                                 + vvel_real[idx] * dtdy_real[idx];
         }
 
