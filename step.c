@@ -216,7 +216,6 @@ int qgps_rk54(complex *omega_t, double *dt) {
                        *uvel    = NULL,
                        *vvel    = NULL;
 
-        MPI_Barrier(QGPS_COMM_WORLD);
         if (!work1)
                 work1 = fftw_alloc_complex(qgps_local_size);
         if (!work2)
