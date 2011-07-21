@@ -19,6 +19,34 @@ int qgps_cleanup_mpi();
 int qgps_broadcast_block(qgps_block_t *block, int src_task);
 int qgps_initialize_fftw();
 
+int qgps_local_nx() {
+        return qgps_current_complex_block->x_length;
+}
+int qgps_local_ny() {
+        return qgps_current_complex_block->y_length;
+}
+int qgps_index(int x, int y) {
+        return y * qgps_local_nx() + x;
+}
+int qgps_index_t(int y, int x) {
+        return x * qgps_local_ny() + y;
+}
+complex qgps_z(int i) {
+        return qgps_x(i) + I * qgps_y(i);
+}
+int qgps_x(int i) {
+        return i % qgps_local_ny();
+}
+int qgps_y(int i) {
+        return i / qgps_local_ny();
+}
+int qgps_x_t(int i) {
+        return i / qgps_local_nx();
+}
+int qgps_y_t(int i) {
+        return i % qgps_local_nx();
+}
+
 int qgps_dft_c2r(const complex *in, double *out) {
         static complex *temporary = NULL;
         if (!temporary)

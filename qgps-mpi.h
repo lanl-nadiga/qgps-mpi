@@ -26,6 +26,16 @@ extern qgps_block_t * qgps_complex_blocks;
 extern qgps_block_t * qgps_current_real_block;
 extern qgps_block_t * qgps_current_complex_block;
 
+int qgps_local_nx();
+int qgps_local_ny();
+int qgps_x(int i);
+int qgps_y(int i);
+int qgps_x_t(int i);
+int qgps_y_t(int i);
+int qgps_index(int x, int y);
+int qgps_index_t(int y, int x);
+complex qgps_z(int i);
+
 extern ptrdiff_t qgps_local_size;
 
 /* MPI task variables */
