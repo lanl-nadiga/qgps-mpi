@@ -440,7 +440,7 @@ double complex_global_max_squared(complex *f) {
 
         // integrate on the local task
         for (int i = 0; i < qgps_local_size; i++)
-                tmp = fmax(tmp, cabs_sqr(f[i]));
+                max = fmax(max, cabs_sqr(f[i]));
 
         // find max of all tasks
         tmp = max;
