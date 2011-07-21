@@ -21,7 +21,8 @@ int dispersion_cutoff = 1;
 
 complex *omega;
 
-int *kx, *ky, *k_sq;    // Array of wave numbers
+int *qgps_kx, *qgps_ky, *qgps_k_sq;    // Array of wave numbers
+complex *qgps_k = NULL;
 double *cwgt;           // weighting for global sums
 
 int calc_vel(complex *vorticity, complex *uvel, complex *vvel);
@@ -42,9 +43,10 @@ int qgps_step_init() {
 
         // initialize the wave number arrays
         // !! must be done before call to init_omega
-        kx      = calloc(qgps_local_size,sizeof(int));
-        ky      = calloc(qgps_local_size,sizeof(int));
-        k_sq    = calloc(qgps_local_size,sizeof(int));
+        qgps_k       = calloc(qgps_local_size, sizeof(complex));
+        qgps_kx      = calloc(qgps_local_size,sizeof(int));
+        qgps_ky      = calloc(qgps_local_size,sizeof(int));
+        qgps_k_sq    = calloc(qgps_local_size,sizeof(int));
         cwgt    = calloc(qgps_local_size,sizeof(double));
 
         int ib = qgps_current_complex_block->x_begin;
@@ -57,23 +59,24 @@ int qgps_step_init() {
                 int idx = j*nx + i;
 
                 if(i <= nx/2) {
-                  kx[idx] = i+ib;
+                  qgps_kx[idx] = i+ib;
                 }
                 else {
-                  kx[idx] = i+ib - qgps_nx;
+                  qgps_kx[idx] = i+ib - qgps_nx;
                 }
 
-                ky[idx] = j+jb;
+                qgps_ky[idx] = j+jb;
 
-                k_sq[idx] = kx[idx]*kx[idx] + ky[idx]*ky[idx];
+                qgps_k[idx] = qgps_kx[idx] + I * qgps_ky[idx];
+                qgps_k_sq[idx] = qgps_kx[idx]*qgps_kx[idx] + qgps_ky[idx]*qgps_ky[idx];
 
-                if(ky[idx] == 0) {
+                if(qgps_ky[idx] == 0) {
                         cwgt[idx] = 1.0;
                 }
-                else if(qgps_nx%2 == 1&& kx[idx] == qgps_nx/2) {
+                else if(qgps_nx%2 == 1&& qgps_kx[idx] == qgps_nx/2) {
                         cwgt[idx] = 1.0;
                 }
-                else if(qgps_ny%2 == 1&& ky[idx] == qgps_ny/2) {
+                else if(qgps_ny%2 == 1&& qgps_ky[idx] == qgps_ny/2) {
                         cwgt[idx] = 1.0;
                 }
                 else {
@@ -108,9 +111,9 @@ int qgps_step_free() {
         fftw_free(omega);
         omega = NULL;
 
-        free(kx);
-        free(ky);
-        free(k_sq);
+        free(qgps_kx);
+        free(qgps_ky);
+        free(qgps_k_sq);
         free(cwgt);
 
         return 0;
@@ -326,7 +329,7 @@ int viscous_forcing(complex *tracer) {
         for (int j = 0; j < b->y_length; j++) {
                 int idx = j * b->x_length + i;
 
-                tracer[idx] /= 1.0 + pow(k_sq[idx] / k_dsp_sq,
+                tracer[idx] /= 1.0 + pow(qgps_k_sq[idx] / k_dsp_sq,
                                         dispersion_exponent);
 
         }
@@ -336,7 +339,7 @@ int cutoff_high_frequencies(complex *tracer) {
         if(! dispersion_cutoff) return 0;
 
         for(int idx = 0; idx < qgps_local_size; idx++) {
-                if(kx[idx] > dispersion_cutoff || ky[idx] > dispersion_cutoff)
+                if(qgps_kx[idx] > dispersion_cutoff || qgps_ky[idx] > dispersion_cutoff)
                         tracer[idx] = 0.0;
         }
 
@@ -354,8 +357,8 @@ int gradient(complex *f, complex *dfdx, complex *dfdy) {
         for(int j = 0; j < ny; j++) {
                 idx = j*nx + i;
 
-                dfdx[idx] = I * kx[idx]*f[idx];
-                dfdy[idx] = I * ky[idx]*f[idx];
+                dfdx[idx] = I * qgps_kx[idx]*f[idx];
+                dfdy[idx] = I * qgps_ky[idx]*f[idx];
         }
 
         return 0;
@@ -371,7 +374,7 @@ int laplacian(complex *f, complex *delf) {
         for(int j = 0; j < ny; j++) {
                 idx = j*nx + i;
 
-                delf[idx] = - k_sq[idx]*f[idx];
+                delf[idx] = - qgps_k_sq[idx]*f[idx];
         }
 
         return 0;
@@ -473,9 +476,9 @@ int calc_vel(complex *vorticity, complex *uvel, complex *vvel) {
         for(int j = 0; j < ny; j++) {
                 idx = j*nx + i;
 
-                if(k_sq[idx] > 0) {
-                        uvel[idx] = -I * ky[idx]*omega[idx]/(double)k_sq[idx];
-                        vvel[idx] =  I * kx[idx]*omega[idx]/(double)k_sq[idx];
+                if(qgps_k_sq[idx] > 0) {
+                        uvel[idx] = -I * qgps_ky[idx]*omega[idx]/(double)qgps_k_sq[idx];
+                        vvel[idx] =  I * qgps_kx[idx]*omega[idx]/(double)qgps_k_sq[idx];
                 }
                 else {
                         uvel[idx] = 0.0;
@@ -557,7 +560,7 @@ void qgps_init_delta_k() {
 
         double a, b;
 
-        int kx = 4, ky = 4;;
+        int qgps_kx = 4, qgps_ky = 4;;
 
         complex k_amp = 0.5 + 0.5*I;
 
@@ -570,8 +573,8 @@ void qgps_init_delta_k() {
 
         for(int i = ib; i < ie; i++)
         for(int j = jb; j < je; j++) {
-                a = 2*M_PI*i*kx/(double)qgps_nx;
-                b = 2*M_PI*j*ky/(double)qgps_ny;
+                a = 2*M_PI*i*qgps_kx/(double)qgps_nx;
+                b = 2*M_PI*j*qgps_ky/(double)qgps_ny;
                 idx = (i-ib)*(qgps_ny + pad) + (j-jb);
                 omega_real[idx] = 2.0*creal(k_amp)*cos(a)*cos(b)
                                 - 2.0*creal(k_amp)*sin(a)*sin(b)
@@ -613,7 +616,7 @@ void qgps_init_patches() {
         complex *specific_vorticity = fftw_alloc_complex(qgps_local_size);
         specific_vorticity[0] = 0;
         for (int i = 1; i < qgps_local_size; i++)
-                specific_vorticity[i] = omega[i] / (kx[i] + I * ky[i]);
+                specific_vorticity[i] = omega[i] / qgps_k[i];
 
         double total_energy = l2_norm_squared(specific_vorticity) / 2;
 
