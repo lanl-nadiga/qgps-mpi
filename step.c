@@ -548,8 +548,6 @@ int qgps_init_delta_k() {
 
         double a, b;
 
-        int qgps_kx = 4, qgps_ky = 4;;
-
         complex k_amp = 0.5 + 0.5*I;
 
         int ib = qgps_current_real_block->x_begin;
@@ -561,8 +559,8 @@ int qgps_init_delta_k() {
 
         for(int i = ib; i < ie; i++)
         for(int j = jb; j < je; j++) {
-                a = 2*M_PI*i*qgps_kx/(double)qgps_nx;
-                b = 2*M_PI*j*qgps_ky/(double)qgps_ny;
+                a = 2*M_PI*i*4/(double)qgps_nx;
+                b = 2*M_PI*j*4/(double)qgps_ny;
                 idx = (i-ib)*(qgps_ny + pad) + (j-jb);
                 omega_real[idx] = 2.0*creal(k_amp)*cos(a)*cos(b)
                                 - 2.0*creal(k_amp)*sin(a)*sin(b)
