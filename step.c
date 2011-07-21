@@ -355,15 +355,7 @@ int cutoff_high_frequencies(complex *tracer) {
 
 
 int gradient(complex *f, complex *dfdx, complex *dfdy) {
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
-
-        for(int i = 0; i < nx; i++)
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
+	for (int idx = 0; idx < qgps_local_size; idx++) {
                 dfdx[idx] = I * qgps_kx[idx]*f[idx];
                 dfdy[idx] = I * qgps_ky[idx]*f[idx];
         }
@@ -372,15 +364,7 @@ int gradient(complex *f, complex *dfdx, complex *dfdy) {
 }
 
 int laplacian(complex *f, complex *delf) {
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
-
-        for(int i = 0; i < nx; i++)
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
+	for (int idx = 0; idx < qgps_local_size; idx++) {
                 delf[idx] = - qgps_k_sq[idx]*f[idx];
         }
 
