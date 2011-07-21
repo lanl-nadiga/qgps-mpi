@@ -466,8 +466,8 @@ int calc_vel(complex *vorticity, complex *uvel, complex *vvel) {
                 idx = j*nx + i;
 
                 if(qgps_k_sq[idx] > 0) {
-                        uvel[idx] = -I * qgps_ky[idx]*omega[idx]/(double)qgps_k_sq[idx];
-                        vvel[idx] =  I * qgps_kx[idx]*omega[idx]/(double)qgps_k_sq[idx];
+                        uvel[idx] = -I * qgps_ky[idx]*vorticity[idx]/(double)qgps_k_sq[idx];
+                        vvel[idx] =  I * qgps_kx[idx]*vorticity[idx]/(double)qgps_k_sq[idx];
                 }
                 else {
                         uvel[idx] = 0.0;
