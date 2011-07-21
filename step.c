@@ -166,13 +166,12 @@ int qgps_step() {
                         omega[idx] += dt_guess*omega_t[idx];
                 }
                 dt_total += dt_guess;
-                printf("%lf %lf\n", dt_total, dt_guess);
+                viscous_forcing(omega);
         }
         qgps_time += qgps_time_step;
         *cached_dt_guess = dt_guess;
 
-        //viscous_forcing(omega);
-        //cutoff_high_frequencies(omega);
+        cutoff_high_frequencies(omega);
 }
 
 int qgps_rk54(complex *omega_t, double *dt) {
