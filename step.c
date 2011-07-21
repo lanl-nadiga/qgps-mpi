@@ -325,17 +325,12 @@ int qgps_rk54(complex *omega_t, double *dt) {
 }
 
 int viscous_forcing(complex *tracer) {
-        const qgps_block_t const *b = qgps_current_complex_block;
         const double k_dsp_sq = k_dispersion * k_dispersion;
 
-        for (int i = 0; i < b->x_length; i++)
-        for (int j = 0; j < b->y_length; j++) {
-                int idx = j * b->x_length + i;
+        for (int i = 0; i < qgps_local_size; i++)
+                tracer[i] /= 1.0 + pow(qgps_k_sq[i] / k_dsp_sq,
+                                                dispersion_exponent);
 
-                tracer[idx] /= 1.0 + pow(qgps_k_sq[idx] / k_dsp_sq,
-                                        dispersion_exponent);
-
-        }
         return 0;
 }
 
@@ -441,21 +436,11 @@ complex complex_integral(complex *f) {
 }
 
 double complex_global_max_squared(complex *f) {
-        double tmp, max = 0.0;
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
+        double tmp = 0., max = 0.0;
 
         // integrate on the local task
-        for(int i = 0; i < nx; i++) {
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
-                tmp = cabs_sqr(f[idx]);
-
-                if(tmp > max) max = tmp;
-        }}
+        for (int i = 0; i < qgps_local_size; i++)
+                tmp = fmax(tmp, cabs_sqr(f[i]));
 
         // find max of all tasks
         tmp = max;

@@ -279,9 +279,6 @@ int qgps_initialize_fftw() {
         // broadcast block information
         for (int task = 0; task < qgps_number_tasks; task++) {
                 qgps_broadcast_block(&(qgps_real_blocks[task]), task);
-        }
-
-        for (int task = 0; task < qgps_number_tasks; task++) {
                 qgps_broadcast_block(&(qgps_complex_blocks[task]), task);
         }
 
