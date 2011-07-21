@@ -24,7 +24,6 @@ complex *omega;
 int *kx, *ky, *k_sq;    // Array of wave numbers
 double *cwgt;           // weighting for global sums
 
-//int gradient(complex *f, complex *dfdx, complex *dfdy);
 int calc_vel(complex *vorticity, complex *uvel, complex *vvel);
 int advection(complex *advt, complex *tracer, complex *uvel, complex *vvel);
 int qgps_rk54(complex *omega_t, double *time_step);
@@ -131,7 +130,6 @@ int qgps_step() {
                 *cached_dt_guess = 0.1*qgps_time_step;
         }
 
-        //double dt_guess = *cached_dt_guess;
         double dt_guess = 0.1*qgps_time_step;
         double dt_total = 0.0,
                dt_max   = 0.0;
@@ -147,15 +145,9 @@ int qgps_step() {
 
                 if(dt_guess < qgps_time_step_min) {
                         dt_guess = qgps_time_step_min;
-//                        fprintf(stderr,"dt_guess problem.\n");
-//                        MPI_Finalize();
-//                        exit(EXIT_FAILURE);
                 }
                 else if(dt_guess > qgps_time_step_max) {
                         dt_guess = qgps_time_step_max;
-//                        fprintf(stderr,"dt_guess problem.\n");
-//                        MPI_Finalize();
-//                        exit(EXIT_FAILURE);
                 }
                 if(dt_guess + dt_total > qgps_time_step)  {
                         dt_guess = qgps_time_step - dt_total;
@@ -312,7 +304,6 @@ int qgps_rk54(complex *omega_t, double *dt) {
         double scale_sq   = complex_global_max_squared(omega_t);
 
         double s = pow(0.25*qgps_error_max*qgps_error_max*scale_sq/err_max_sq,0.125);
-        //double s = pow(qgps_error_max/err_max_sq,0.5);
         if ( s < 0.1 ) {
                 s = 0.1;
         }
