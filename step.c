@@ -610,6 +610,17 @@ void qgps_init_patches() {
 
         qgps_dft_r2c(omega_real,omega);
 
+        complex *specific_vorticity = fftw_alloc_complex(qgps_local_size);
+        specific_vorticity[0] = 0;
+        for (int i = 1; i < qgps_local_size; i++)
+                specific_vorticity[i] = omega[i] / (kx[i] + I * ky[i]);
+
+        double total_energy = l2_norm_squared(specific_vorticity) / 2;
+
+        omega[0] /= sqrt(total_energy);
+        for (int i = 1; i < qgps_local_size; i++)
+                omega[i] /= sqrt(total_energy);
+
         fftw_free(omega_real);
 }
 
