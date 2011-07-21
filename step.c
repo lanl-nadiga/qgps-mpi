@@ -335,18 +335,9 @@ int viscous_forcing(complex *tracer) {
 int cutoff_high_frequencies(complex *tracer) {
         if(! dispersion_cutoff) return 0;
 
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
-
-        for(int i = 0; i < nx; i++)
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
-                if(kx[idx] > dispersion_cutoff || ky[idx] > dispersion_cutoff) {
+        for(int idx = 0; idx < qgps_local_size; idx++) {
+                if(kx[idx] > dispersion_cutoff || ky[idx] > dispersion_cutoff)
                         tracer[idx] = 0.0;
-                }
         }
 
         return 0;
