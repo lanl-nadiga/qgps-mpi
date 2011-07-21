@@ -135,8 +135,7 @@ int qgps_step() {
         }
 
         double dt_guess = 0.1*qgps_time_step;
-        double dt_total = 0.0,
-               dt_max   = 0.0;
+        double dt_total = 0.0;
 
         static complex *omega_t = NULL;
 

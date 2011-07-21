@@ -168,7 +168,7 @@ int qgps_broadcast_block(qgps_block_t *block, int src_task) {
 }
 
 int qgps_initialize_fftw() {
-        ptrdiff_t alloc_local, local_n0, local_0_start;
+        ptrdiff_t local_n0, local_0_start;
         qgps_block_t* block;
 
         fftw_mpi_init();
