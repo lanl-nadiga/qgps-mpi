@@ -306,8 +306,9 @@ int qgps_rk54(complex *omega_t, double *dt) {
 
         // Calculate the optimal time step
         double err_max_sq = complex_global_max_squared(work6);
+        double scale_sq   = complex_global_max_squared(omega_t);
 
-        double s = pow(0.25*qgps_error_max*qgps_error_max/err_max_sq,0.125);
+        double s = pow(0.25*qgps_error_max*qgps_error_max*scale_sq/err_max_sq,0.125);
         if ( s < 0.1 ) {
                 s = 0.1;
         }
