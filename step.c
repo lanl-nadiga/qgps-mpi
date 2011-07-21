@@ -586,10 +586,6 @@ void qgps_init_patches() {
 
         double a, b;
 
-        int kx = 3, ky = 3;
-
-        complex k_amp = 0.5 + 0.5*I;
-
         int ib = qgps_current_real_block->x_begin;
         int jb = qgps_current_real_block->y_begin;
         int ie = qgps_current_real_block->x_end;
@@ -599,8 +595,8 @@ void qgps_init_patches() {
 
         for(int i = ib; i < ie; i++)
         for(int j = jb; j < je; j++) {
-                a = 2*M_PI*i*kx/(double)qgps_nx;
-                b = 2*M_PI*j*ky/(double)qgps_ny;
+                a = 2*M_PI*i*3/(double)qgps_nx;
+                b = 2*M_PI*j*3/(double)qgps_ny;
                 idx = (i-ib)*(qgps_ny + pad) + (j-jb);
                 omega_real[idx] = (cos(a) + sin(a))
                                 * (cos(b) + sin(b));
