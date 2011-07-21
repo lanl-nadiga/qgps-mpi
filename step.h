@@ -14,7 +14,10 @@ int qgps_step_init();
 int qgps_step_free();
 int qgps_step();
 
+int gradient(complex *f, complex *dfdx, complex *dfdy);
+
 double l2_norm_squared(complex *f);
+double complex_global_max_squared(complex *f);
 
 #endif
 
