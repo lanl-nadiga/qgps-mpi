@@ -141,7 +141,7 @@ int qgps_initialize_mpi(int argc, char **argv) {
         return 0;
 }
 
-int qgps_initialize_blocks(int argc, char **argv) {
+int qgps_initialize_blocks() {
         qgps_real_blocks = calloc(qgps_number_tasks, sizeof(qgps_block_t));
         if (!qgps_real_blocks)
                 return 1;
