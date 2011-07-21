@@ -113,6 +113,7 @@ int qgps_configure_broadcast() {
 int qgps_config_load(char *file) {
         if (!config) {
                 config = iniparser_load(file);
+                return config == 0;
         }
         else {
                 dictionary *new_conf = iniparser_load(file);
@@ -169,11 +170,14 @@ int qgps_option_set(const struct option *o, char *value) {
                 config_initialize();
 
         iniparser_set(config, sectioned_name(o), value);
+        return 0;
 }
 int qgps_config_read() {
         for (char *o = (char*)options; *o; o += sizeof(struct option))
                 if (qgps_option_get(option_at(o)))
                         qgps_option_read(option_at(o));
+
+        return 0;
 }
 char *qgps_option_get(const struct option *o) {
         if (!o)
@@ -284,16 +288,14 @@ int qgps_option_read(const struct option *o) {
         return 0;
 }
 int qgps_input() {
-        qgps_input_open();
-        qgps_input_read();
-        qgps_input_close();
+        return qgps_input_open() || qgps_input_read() || qgps_input_close();
 }
 int qgps_input_open() {
         MPI_File_open(QGPS_COMM_WORLD, qgps_input_filename,
                         MPI_MODE_RDONLY,
                         MPI_INFO_NULL, &qgps_input_file);
 
-        MPI_File_set_view(qgps_input_file, qgps_current_real_block->y_begin * qgps_nx,
+        return MPI_File_set_view(qgps_input_file, qgps_current_real_block->y_begin * qgps_nx,
                         MPI_DOUBLE, MPI_DOUBLE, "native", MPI_INFO_NULL);
 }
 int qgps_input_close() {
@@ -311,8 +313,7 @@ int qgps_input_read() {
                                 MPI_DOUBLE, MPI_STATUS_IGNORE);
         }
 
-        qgps_transpose_r(qgps_init_data);
-        return 0;
+        return qgps_transpose_r(qgps_init_data);
 }
 qgps_init_type_t qgps_init_type_parse(const char *string) {
         if(!strcmp("delta", string))

@@ -169,6 +169,8 @@ int qgps_step() {
         *cached_dt_guess = dt_guess;
 
         cutoff_high_frequencies(omega);
+
+        return 0;
 }
 
 int qgps_rk54(complex *omega_t, double *dt) {
@@ -335,6 +337,7 @@ int viscous_forcing(complex *tracer) {
                                         dispersion_exponent);
 
         }
+        return 0;
 }
 
 int cutoff_high_frequencies(complex *tracer) {
@@ -554,7 +557,7 @@ int advection(complex *advt, complex *tracer, complex *uvel, complex *vvel) {
         return 0;
 }
 
-void qgps_init_delta_k() {
+int qgps_init_delta_k() {
         /*
          * Initialize a delta funciton at a specific wave number
          */
@@ -587,9 +590,11 @@ void qgps_init_delta_k() {
         qgps_dft_r2c(omega_real,omega);
 
         fftw_free(omega_real);
+
+        return 0;
 }
 
-void qgps_init_patches() {
+int qgps_init_patches() {
         /*
          * Initialize a delta funciton at a specific wave number
          */
@@ -627,6 +632,8 @@ void qgps_init_patches() {
                 omega[i] /= sqrt(total_energy);
 
         fftw_free(omega_real);
+
+        return 0;
 }
 
 
@@ -635,17 +642,22 @@ int init_omega(qgps_init_type_t init_type) {
                 case QGPS_INIT_RESTART:
                         fprintf(stderr,"init option not supported yet.\n");
                         qgps_exit(EXIT_FAILURE);
+                        return 1;
                         break;
                 case QGPS_INIT_DELTA_K:
-                        qgps_init_delta_k();
+                        if (qgps_init_delta_k())
+                                return 1;
                         break;
                 case QGPS_INIT_PATCHES:
-                        qgps_init_patches();
+                        if (qgps_init_patches())
+                                return 1;
                         break;
                 default:
                         fprintf(stderr,"unknown init option.\n");
                         qgps_exit(EXIT_FAILURE);
+                        return 1;
                         break;
         }
+        return 0;
 }
 
