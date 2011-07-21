@@ -273,7 +273,7 @@ int qgps_option_read(const struct option *o) {
         case 'Y':
                 qgps_ny = qgps_option_getint(o);
                 break;
-        case 'd':
+        case 'D':
                 qgps_output_directory = qgps_option_get(o);
                 break;
         default:
