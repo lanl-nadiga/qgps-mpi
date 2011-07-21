@@ -83,6 +83,14 @@ int qgps_step_init() {
                 else {
                         cwgt[idx] = 2.0;
                 }
+
+                if (abs(qgps_kx[idx]) > nx / 2 || abs(qgps_ky[idx]) > ny / 2) {
+                        qgps_kx[idx] = 0;
+                        qgps_ky[idx] = 0;
+                        qgps_k[idx] = 0;
+                        qgps_k_sq[idx] = 0;
+                        cwgt[idx] = 0;
+                }
         }
 
         init_k_dispersion();
@@ -385,18 +393,11 @@ double cabs_sqr(complex c) {
 
 double l2_norm_squared(complex *f) {
         double tmp, norm = 0.0;
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
 
         // integrate on the local task
-        for(int i = 0; i < nx; i++) {
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
-                norm += cabs_sqr(f[idx])*cwgt[idx];
-        }}
+        for(int i = 0; i < qgps_local_size; i++)
+                if (cwgt[i] > 1e-15)
+                        norm += cabs_sqr(f[i]) * cwgt[i];
 
         // sum across tasks
         tmp = norm;
@@ -411,18 +412,11 @@ double l2_norm_squared(complex *f) {
 
 complex complex_integral(complex *f) {
         double tmp, total = 0.0;
-        int idx;
-
-        int nx = qgps_current_complex_block->x_length;
-        int ny = qgps_current_complex_block->y_length;
 
         // integrate on the local task
-        for(int i = 0; i < nx; i++) {
-        for(int j = 0; j < ny; j++) {
-                idx = j*nx + i;
-
-                total += f[idx]*cwgt[idx];
-        }}
+        for(int i = 0; i < qgps_local_size; i++)
+                if (cwgt[i] > 1e-15)
+                        total += f[i] * cwgt[i];
 
         // sum across tasks
         tmp = total;
@@ -440,7 +434,8 @@ double complex_global_max_squared(complex *f) {
 
         // integrate on the local task
         for (int i = 0; i < qgps_local_size; i++)
-                max = fmax(max, cabs_sqr(f[i]));
+                if (cwgt[i] > 1e-15)
+                        max = fmax(max, cabs_sqr(f[i]));
 
         // find max of all tasks
         tmp = max;
@@ -603,14 +598,12 @@ int qgps_init_patches() {
         qgps_dft_r2c(omega_real,omega);
 
         complex *specific_vorticity = fftw_alloc_complex(qgps_local_size);
-        specific_vorticity[0] = 0;
-        for (int i = 1; i < qgps_local_size; i++)
-                specific_vorticity[i] = omega[i] / qgps_k[i];
+        for (int i = 0; i < qgps_local_size; i++)
+                specific_vorticity[i] = qgps_k[i] ? omega[i] / qgps_k[i] : 0;
 
         double total_energy = l2_norm_squared(specific_vorticity) / 2;
 
-        omega[0] /= sqrt(total_energy);
-        for (int i = 1; i < qgps_local_size; i++)
+        for (int i = 0; i < qgps_local_size; i++)
                 omega[i] /= sqrt(total_energy);
 
         fftw_free(omega_real);
