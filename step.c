@@ -3,6 +3,7 @@
 #include <math.h>
 #include "qgps-mpi.h"
 #include "qgps-input.h"
+#include "diagnostics.h"
 #include "step.h"
 
 #define M_PI 3.1415926535897932384626433832795028841971693993751058209749445923
@@ -162,6 +163,7 @@ int qgps_step() {
                 }
                 dt_total += dt_guess;
                 viscous_forcing(omega);
+                qgps_diagnostics_update();
         }
         qgps_time += qgps_time_step;
         *cached_dt_guess = dt_guess;
