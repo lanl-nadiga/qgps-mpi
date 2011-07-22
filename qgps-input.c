@@ -104,7 +104,7 @@ int qgps_configure_broadcast() {
 
         if (!qgps_is_master_task)
                 qgps_output_directory = malloc((length + 1) * sizeof(char));
-        MPI_Bcast(&qgps_output_directory, (length + 1) * sizeof(char),
+        MPI_Bcast(qgps_output_directory, (length + 1) * sizeof(char),
                 MPI_CHAR, qgps_master_task, QGPS_COMM_WORLD);
 
         return 0;
